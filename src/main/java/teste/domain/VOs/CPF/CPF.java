@@ -1,4 +1,4 @@
-package teste.domain.VOs;
+package teste.domain.VOs.CPF;
 
 public class CPF {
 

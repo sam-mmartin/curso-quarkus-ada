@@ -1,22 +1,41 @@
 package teste.domain.aluno;
 
-import teste.domain.VOs.CPF;
-import teste.domain.VOs.Matricula;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.Table;
 
+import teste.domain.VOs.CPF.CPF;
+import teste.domain.VOs.CPF.CPFAttributeConverter;
+import teste.domain.VOs.Matricula.Matricula;
+import teste.domain.VOs.Matricula.MatriculaAttributeConverter;
+
+@Entity
+@Table(name = "ALUNO")
+@NamedNativeQueries({
+      @NamedNativeQuery(name = "CONSULTAR_ALUNOS", query = "SELECT * FROM ALUNO", resultClass = Aluno.class)
+})
 public class Aluno {
 
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
    private int id;
-   private Matricula matricula;
    private String nome;
+   @Convert(converter = CPFAttributeConverter.class)
    private CPF cpf;
+   @Convert(converter = MatriculaAttributeConverter.class)
+   private Matricula matricula;
    private boolean status;
 
    public Aluno() {
    }
 
-   public Aluno(int id, Matricula matricula, String nome, CPF cpf, boolean status) {
+   public Aluno(int id, String nome, CPF cpf, boolean status) {
       this.id = id;
-      this.matricula = matricula;
       this.nome = nome;
       this.cpf = cpf;
       this.status = status;
@@ -28,14 +47,6 @@ public class Aluno {
 
    public void setId(int id) {
       this.id = id;
-   }
-
-   public Matricula getMatricula() {
-      return matricula;
-   }
-
-   public void setMatricula(Matricula matricula) {
-      this.matricula = matricula;
    }
 
    public String getNome() {
@@ -52,6 +63,14 @@ public class Aluno {
 
    public void setCpf(CPF cpf) {
       this.cpf = cpf;
+   }
+
+   public Matricula getMatricula() {
+      return matricula;
+   }
+
+   public void setMatricula(Matricula matricula) {
+      this.matricula = matricula;
    }
 
    public boolean isStatus() {

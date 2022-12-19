@@ -6,15 +6,17 @@ import teste.domain.aluno.Aluno;
 
 public interface RepositoryAluno {
 
-   public List<Aluno> listarTodos();
+   public List<Aluno> listarTodos() throws Exception;
 
-   public Aluno buscarPorMatricula(int id);
+   public Aluno buscarPorMatricula(String matricula) throws Exception;
 
-   public void matricular(Aluno aluno);
+   public Aluno buscarPorId(int id) throws Exception;
 
-   public void rematricular(int id, Aluno aluno);
+   public void matricular(Aluno aluno) throws Exception;
 
-   public void atualizarCadastroDoAluno(int id, Aluno aluno);
+   public void rematricular(int id, Aluno aluno) throws Exception;
 
-   public void cancelarMatricula(int id);
+   public void atualizarCadastroDoAluno(int id, Aluno aluno) throws Exception;
+
+   public void cancelarMatricula(int id) throws Exception;
 }
