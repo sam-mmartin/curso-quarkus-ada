@@ -35,8 +35,18 @@ public class AlunoRepositoryH2 implements RepositoryAluno {
    }
 
    @Override
-   public Aluno buscarPorMatricula(String matricula) {
-      return null;
+   public Aluno buscarPorMatricula(String matricula) throws Exception {
+      String nameQuery = "CONSULTAR_ALUNO_POR_MATRICULA";
+      TypedQuery<Aluno> query = em.createNamedQuery(nameQuery, Aluno.class)
+            .setParameter("matricula", matricula);
+
+      try {
+         return query.getSingleResult();
+      } catch (NoResultException e) {
+         throw new Exception(e);
+      } catch (PersistenceException e) {
+         throw new Exception(e);
+      }
    }
 
    @Override
@@ -59,21 +69,30 @@ public class AlunoRepositoryH2 implements RepositoryAluno {
    }
 
    @Override
-   public void rematricular(int id, Aluno aluno) {
-      // TODO Auto-generated method stub
-
+   public void rematricular(int id) throws Exception {
+      Aluno aluno = em.find(Aluno.class, id);
+      aluno.setStatus(true);
+      update(aluno);
    }
 
    @Override
-   public void atualizarCadastroDoAluno(int id, Aluno aluno) {
-      // TODO Auto-generated method stub
-
+   public void atualizarCadastroDoAluno(Aluno aluno) throws Exception {
+      update(aluno);
    }
 
    @Override
-   public void cancelarMatricula(int id) {
-      // TODO Auto-generated method stub
+   public void cancelarMatricula(int id) throws Exception {
+      Aluno aluno = em.find(Aluno.class, id);
+      aluno.setStatus(false);
+      update(aluno);
+   }
 
+   private void update(Aluno aluno) throws Exception {
+      try {
+         em.merge(aluno);
+      } catch (PersistenceException e) {
+         throw new Exception(e);
+      }
    }
 
 }

@@ -14,9 +14,9 @@ public interface RepositoryAluno {
 
    public void matricular(Aluno aluno) throws Exception;
 
-   public void rematricular(int id, Aluno aluno) throws Exception;
+   public void rematricular(int id) throws Exception;
 
-   public void atualizarCadastroDoAluno(int id, Aluno aluno) throws Exception;
+   public void atualizarCadastroDoAluno(Aluno aluno) throws Exception;
 
    public void cancelarMatricula(int id) throws Exception;
 }

@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -15,7 +16,8 @@ import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import teste.application.dto.AlunoDTO;
+import teste.application.dto.aluno.AlunoRequestDTO;
+import teste.application.dto.aluno.AlunoResponseDTO;
 import teste.application.services.AlunoService;
 
 @RequestScoped
@@ -30,7 +32,6 @@ public class AlunoResource {
 
    @GET
    public Response listarTodosAlunos() throws Exception {
-      // System.out.println(service.getAll());
       return Response.ok(service.getAll()).build();
    }
 
@@ -38,7 +39,19 @@ public class AlunoResource {
    @Path("/{id}")
    public Response buscarAlunoPorId(@PathParam("id") int id) throws Exception {
 
-      AlunoDTO alunoDTO = service.getById(id);
+      AlunoResponseDTO alunoDTO = service.getById(id);
+
+      if (Objects.isNull(alunoDTO)) {
+         return Response.status(Response.Status.NOT_FOUND).build();
+      }
+
+      return Response.ok(alunoDTO).build();
+   }
+
+   @GET
+   @Path("/matricula/{matricula}")
+   public Response buscarAlunoPorMatricula(@PathParam("matricula") String matricula) throws Exception {
+      AlunoResponseDTO alunoDTO = service.getAlunoByMatricula(matricula);
 
       if (Objects.isNull(alunoDTO)) {
          return Response.status(Response.Status.NOT_FOUND).build();
@@ -48,7 +61,31 @@ public class AlunoResource {
    }
 
    @POST
-   public Response matricularAluno(AlunoDTO alunoDTO) throws Exception {
-      return Response.status(Response.Status.CREATED).entity(service.save(alunoDTO)).build();
+   public Response matricularAluno(AlunoRequestDTO alunoDTO) throws Exception {
+      return Response.status(Response.Status.CREATED).entity(service.create(alunoDTO)).build();
+   }
+
+   @PUT
+   @Path("/rematricular/{matricula}")
+   public Response rematricularAluno(@PathParam("matricula") String matricula) throws Exception {
+      AlunoResponseDTO alunoDTO = service.rematricularAluno(matricula);
+
+      if (Objects.isNull(alunoDTO)) {
+         return Response.status(Response.Status.NOT_FOUND).build();
+      }
+
+      return Response.ok(alunoDTO).build();
+   }
+
+   @PUT
+   @Path("/cancelar-matricula/{matricula}")
+   public Response cancelarMatriculaAluno(@PathParam("matricula") String matricula) throws Exception {
+      AlunoResponseDTO alunoDTO = service.cancelarMatricula(matricula);
+
+      if (Objects.isNull(alunoDTO)) {
+         return Response.status(Response.Status.NOT_FOUND).build();
+      }
+
+      return Response.ok(alunoDTO).build();
    }
 }

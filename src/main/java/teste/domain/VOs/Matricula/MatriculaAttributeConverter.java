@@ -6,7 +6,7 @@ public class MatriculaAttributeConverter implements AttributeConverter<Matricula
 
    @Override
    public String convertToDatabaseColumn(Matricula attribute) {
-      return attribute == null ? null : attribute.toString();
+      return attribute == null ? null : attribute.getNumero();
    }
 
    @Override

@@ -8,61 +8,62 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import teste.application.dto.AlunoDTO;
-import teste.application.interfaces.services.ServicePessoa;
+import teste.application.dto.aluno.AlunoRequestDTO;
+import teste.application.dto.aluno.AlunoResponseDTO;
+import teste.application.interfaces.services.ServiceAluno;
 import teste.domain.VOs.CPF.CPF;
 import teste.domain.VOs.Matricula.Matricula;
 import teste.domain.aluno.Aluno;
 import teste.infrastructure.aluno.AlunoRepositoryH2;
 
 @RequestScoped
-public class AlunoService implements ServicePessoa<Aluno, AlunoDTO> {
+public class AlunoService implements ServiceAluno {
 
    @Inject
    AlunoRepositoryH2 repositorio;
 
-   @Override
-   public AlunoDTO getById(int id) throws Exception {
+   public AlunoResponseDTO getById(int id) throws Exception {
       Aluno aluno = repositorio.buscarPorId(id);
 
       if (Objects.isNull(aluno)) {
          return null;
       }
 
-      return new AlunoDTO(aluno.getId(),
-            aluno.getNome(),
-            aluno.getCpf().getNumero(),
-            aluno.isStatus());
+      return retornaDTO(aluno);
    }
 
-   @Override
    public List<Aluno> getAll() throws Exception {
-      // System.out.println(repositorio.listarTodos());
       return repositorio.listarTodos();
    }
 
-   @Override
    @Transactional(rollbackOn = Exception.class)
-   public Aluno save(AlunoDTO alunoDTO) throws Exception {
+   public Aluno create(AlunoRequestDTO alunoDTO) throws Exception {
       Aluno novo = alunoDTO.criarAluno();
+      novo.setStatus(true);
       novo.setMatricula(gerarMatricula());
+
       repositorio.matricular(novo);
       return repositorio.buscarPorId(novo.getId());
    }
 
-   @Override
-   public void remove(int id) {
-      repositorio.cancelarMatricula(id);
-   }
-
-   @Override
-   public void update(int id, AlunoDTO alunoDTO) throws Exception {
+   public void update(int id, AlunoRequestDTO alunoDTO) throws Exception {
       Aluno aluno = repositorio.buscarPorId(id);
       aluno.setNome(alunoDTO.getNome());
       aluno.setCpf(new CPF(alunoDTO.getCpf()));
-      aluno.setStatus(alunoDTO.isStatus());
 
-      repositorio.atualizarCadastroDoAluno(id, aluno);
+      repositorio.atualizarCadastroDoAluno(aluno);
+   }
+
+   private AlunoResponseDTO retornaDTO(Aluno aluno) {
+
+      AlunoResponseDTO alunoDTO = new AlunoResponseDTO(
+            aluno.getId(),
+            aluno.getNome(),
+            aluno.getCpf().getNumero(),
+            aluno.getMatricula().getNumero(),
+            aluno.isStatus());
+
+      return alunoDTO;
    }
 
    private Matricula gerarMatricula() {
@@ -71,6 +72,43 @@ public class AlunoService implements ServicePessoa<Aluno, AlunoDTO> {
       int validator = random.nextInt(1000);
 
       return new Matricula(number + "-" + validator);
+   }
+
+   @Override
+   public AlunoResponseDTO getAlunoByMatricula(String matricula) throws Exception {
+      Aluno aluno = repositorio.buscarPorMatricula(matricula);
+
+      if (Objects.isNull(aluno)) {
+         return null;
+      }
+
+      return retornaDTO(aluno);
+   }
+
+   @Override
+   @Transactional(rollbackOn = Exception.class)
+   public AlunoResponseDTO rematricularAluno(String matricula) throws Exception {
+      Aluno aluno = repositorio.buscarPorMatricula(matricula);
+
+      if (Objects.isNull(aluno)) {
+         return null;
+      }
+
+      repositorio.rematricular(aluno.getId());
+      return retornaDTO(aluno);
+   }
+
+   @Override
+   @Transactional(rollbackOn = Exception.class)
+   public AlunoResponseDTO cancelarMatricula(String matricula) throws Exception {
+      Aluno aluno = repositorio.buscarPorMatricula(matricula);
+
+      if (Objects.isNull(aluno)) {
+         return null;
+      }
+
+      repositorio.cancelarMatricula(aluno.getId());
+      return retornaDTO(aluno);
    }
 
 }

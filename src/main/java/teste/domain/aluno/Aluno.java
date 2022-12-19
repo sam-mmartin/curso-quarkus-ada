@@ -17,7 +17,8 @@ import teste.domain.VOs.Matricula.MatriculaAttributeConverter;
 @Entity
 @Table(name = "ALUNO")
 @NamedNativeQueries({
-      @NamedNativeQuery(name = "CONSULTAR_ALUNOS", query = "SELECT * FROM ALUNO", resultClass = Aluno.class)
+      @NamedNativeQuery(name = "CONSULTAR_ALUNOS", query = "SELECT * FROM ALUNO", resultClass = Aluno.class),
+      @NamedNativeQuery(name = "CONSULTAR_ALUNO_POR_MATRICULA", query = "SELECT * FROM ALUNO WHERE matricula = :matricula", resultClass = Aluno.class)
 })
 public class Aluno {
 
@@ -34,11 +35,9 @@ public class Aluno {
    public Aluno() {
    }
 
-   public Aluno(int id, String nome, CPF cpf, boolean status) {
-      this.id = id;
+   public Aluno(String nome, CPF cpf) {
       this.nome = nome;
       this.cpf = cpf;
-      this.status = status;
    }
 
    public int getId() {
