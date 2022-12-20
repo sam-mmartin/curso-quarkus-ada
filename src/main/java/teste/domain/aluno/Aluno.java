@@ -9,6 +9,8 @@ import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import teste.domain.VOs.CPF.CPF;
 import teste.domain.VOs.CPF.CPFAttributeConverter;
 import teste.domain.VOs.Matricula.Matricula;
@@ -20,6 +22,8 @@ import teste.domain.VOs.Matricula.MatriculaAttributeConverter;
       @NamedNativeQuery(name = "CONSULTAR_ALUNOS", query = "SELECT * FROM ALUNO", resultClass = Aluno.class),
       @NamedNativeQuery(name = "CONSULTAR_ALUNO_POR_MATRICULA", query = "SELECT * FROM ALUNO WHERE matricula = :matricula", resultClass = Aluno.class)
 })
+@Getter
+@Setter
 public class Aluno {
 
    @Id
@@ -38,46 +42,6 @@ public class Aluno {
    public Aluno(String nome, CPF cpf) {
       this.nome = nome;
       this.cpf = cpf;
-   }
-
-   public int getId() {
-      return id;
-   }
-
-   public void setId(int id) {
-      this.id = id;
-   }
-
-   public String getNome() {
-      return nome;
-   }
-
-   public void setNome(String nome) {
-      this.nome = nome;
-   }
-
-   public CPF getCpf() {
-      return cpf;
-   }
-
-   public void setCpf(CPF cpf) {
-      this.cpf = cpf;
-   }
-
-   public Matricula getMatricula() {
-      return matricula;
-   }
-
-   public void setMatricula(Matricula matricula) {
-      this.matricula = matricula;
-   }
-
-   public boolean isStatus() {
-      return status;
-   }
-
-   public void setStatus(boolean status) {
-      this.status = status;
    }
 
 }

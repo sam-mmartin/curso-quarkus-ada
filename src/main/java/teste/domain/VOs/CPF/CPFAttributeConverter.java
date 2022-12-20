@@ -8,7 +8,7 @@ public class CPFAttributeConverter implements AttributeConverter<CPF, String> {
 
    @Override
    public String convertToDatabaseColumn(CPF attribute) {
-      return attribute == null ? null : attribute.toString();
+      return attribute == null ? null : attribute.getNumero();
    }
 
    @Override

@@ -1,5 +1,8 @@
 package teste.domain.VOs.CPF;
 
+import lombok.Getter;
+
+@Getter
 public class CPF {
 
    private String numero;
@@ -14,12 +17,4 @@ public class CPF {
       this.numero = numero;
    }
 
-   public String getNumero() {
-      return numero;
-   }
-
-   @Override
-   public String toString() {
-      return numero;
-   }
 }
