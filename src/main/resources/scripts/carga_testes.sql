@@ -1,8 +1,0 @@
--- CREATE TABLE IF NOT EXISTS ALUNO (
---    id INT NOT NULL AUTO_INCREMENT,
---    nome VARCHAR(100) NOT NULL,
---    cpf VARCHAR(14) NOT NULL,
---    matricula VARCHAR(10) NOT NULL,
---    status BOOLEAN NOT NULL,
---    PRIMARY KEY (id)
--- );

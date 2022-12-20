@@ -1,4 +1,4 @@
-package teste.domain.aluno;
+package teste.domain.professor;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -15,12 +15,12 @@ import teste.domain.VOs.Matricula.Matricula;
 import teste.domain.VOs.Matricula.MatriculaAttributeConverter;
 
 @Entity
-@Table(name = "ALUNO", schema = "vm_mysql_db")
+@Table(name = "PROFESSOR", schema = "vm_mysql_db")
 @NamedNativeQueries({
-      @NamedNativeQuery(name = "CONSULTAR_ALUNOS", query = "SELECT * FROM ALUNO", resultClass = Aluno.class),
-      @NamedNativeQuery(name = "CONSULTAR_ALUNO_POR_MATRICULA", query = "SELECT * FROM ALUNO WHERE matricula = :matricula", resultClass = Aluno.class)
+      @NamedNativeQuery(name = "CONSULTAR_PROFESSORES", query = "SELECT * FROM PROFESSOR", resultClass = Professor.class),
+      @NamedNativeQuery(name = "CONSULTAR_PROFESSOR_POR_MATRICULA", query = "SELECT * FROM PROFESSOR WHERE matricula = :matricula", resultClass = Professor.class)
 })
-public class Aluno {
+public class Professor {
 
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,10 +32,10 @@ public class Aluno {
    private Matricula matricula;
    private boolean status;
 
-   public Aluno() {
+   public Professor() {
    }
 
-   public Aluno(String nome, CPF cpf) {
+   public Professor(String nome, CPF cpf) {
       this.nome = nome;
       this.cpf = cpf;
    }

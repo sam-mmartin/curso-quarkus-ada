@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import teste.application.dto.Mensagem;
 import teste.application.dto.aluno.AlunoRequestDTO;
 import teste.application.dto.aluno.AlunoResponseDTO;
 import teste.application.services.AlunoService;
@@ -51,7 +52,7 @@ public class AlunoResource {
    @GET
    @Path("/matricula/{matricula}")
    public Response buscarAlunoPorMatricula(@PathParam("matricula") String matricula) throws Exception {
-      AlunoResponseDTO alunoDTO = service.getAlunoByMatricula(matricula);
+      AlunoResponseDTO alunoDTO = service.getByMatricula(matricula);
 
       if (Objects.isNull(alunoDTO)) {
          return Response.status(Response.Status.NOT_FOUND).build();
@@ -68,24 +69,16 @@ public class AlunoResource {
    @PUT
    @Path("/rematricular/{matricula}")
    public Response rematricularAluno(@PathParam("matricula") String matricula) throws Exception {
-      AlunoResponseDTO alunoDTO = service.rematricularAluno(matricula);
+      Mensagem mensagem = service.rematricularAluno(matricula);
 
-      if (Objects.isNull(alunoDTO)) {
-         return Response.status(Response.Status.NOT_FOUND).build();
-      }
-
-      return Response.ok(alunoDTO).build();
+      return Response.ok(mensagem).build();
    }
 
    @PUT
    @Path("/cancelar-matricula/{matricula}")
    public Response cancelarMatriculaAluno(@PathParam("matricula") String matricula) throws Exception {
-      AlunoResponseDTO alunoDTO = service.cancelarMatricula(matricula);
+      Mensagem mensagem = service.cancelarMatricula(matricula);
 
-      if (Objects.isNull(alunoDTO)) {
-         return Response.status(Response.Status.NOT_FOUND).build();
-      }
-
-      return Response.ok(alunoDTO).build();
+      return Response.ok(mensagem).build();
    }
 }

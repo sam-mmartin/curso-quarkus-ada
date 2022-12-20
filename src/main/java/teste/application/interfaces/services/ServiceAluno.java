@@ -1,12 +1,10 @@
 package teste.application.interfaces.services;
 
-import teste.application.dto.aluno.AlunoResponseDTO;
+import teste.application.dto.Mensagem;
 
 public interface ServiceAluno {
 
-   public AlunoResponseDTO getAlunoByMatricula(String matricula) throws Exception;
+   public Mensagem rematricularAluno(String matricula) throws Exception;
 
-   public AlunoResponseDTO rematricularAluno(String matricula) throws Exception;
-
-   public AlunoResponseDTO cancelarMatricula(String matricula) throws Exception;
+   public Mensagem cancelarMatricula(String matricula) throws Exception;
 }

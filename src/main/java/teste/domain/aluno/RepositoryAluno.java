@@ -1,8 +1,6 @@
-package teste.domain.aluno.interfaces;
+package teste.domain.aluno;
 
 import java.util.List;
-
-import teste.domain.aluno.Aluno;
 
 public interface RepositoryAluno {
 

@@ -1,6 +1,6 @@
-package teste.application.dto.aluno;
+package teste.application.dto.professor;
 
-public class AlunoResponseDTO {
+public class ProfessorResponseDTO {
 
    private int id;
    private String nome;
@@ -8,7 +8,7 @@ public class AlunoResponseDTO {
    private String matricula;
    private boolean status;
 
-   public AlunoResponseDTO(int id, String nome, String cpf, String matricula, boolean status) {
+   public ProfessorResponseDTO(int id, String nome, String cpf, String matricula, boolean status) {
       this.id = id;
       this.nome = nome;
       this.cpf = cpf;
@@ -73,7 +73,7 @@ public class AlunoResponseDTO {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      AlunoResponseDTO other = (AlunoResponseDTO) obj;
+      ProfessorResponseDTO other = (ProfessorResponseDTO) obj;
       if (id != other.id)
          return false;
       if (matricula == null) {
