@@ -17,7 +17,7 @@ import teste.domain.VOs.Matricula.Matricula;
 import teste.domain.VOs.Matricula.MatriculaAttributeConverter;
 
 @Entity
-@Table(name = "ALUNO", schema = "vm_mysql_db")
+@Table(name = "ALUNO")
 @NamedNativeQueries({
       @NamedNativeQuery(name = "CONSULTAR_ALUNOS", query = "SELECT * FROM ALUNO", resultClass = Aluno.class),
       @NamedNativeQuery(name = "CONSULTAR_ALUNO_POR_MATRICULA", query = "SELECT * FROM ALUNO WHERE matricula = :matricula", resultClass = Aluno.class)
