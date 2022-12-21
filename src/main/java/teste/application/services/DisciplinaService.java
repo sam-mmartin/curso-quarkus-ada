@@ -57,7 +57,7 @@ public class DisciplinaService
    @Override
    @Transactional(rollbackOn = Exception.class)
    public Mensagem update(int id, DisciplinaRequestDTO disciplinaDTO) throws Exception {
-      repositorio.update("nomeDaDisciplina = ?1 where id = ?2", disciplinaDTO.getNomeDaDisciplina(), id);
+      repositorio.update("nomeDaDisciplina = ?1 where id = ?2", disciplinaDTO.getNomeDaDisciplina(), (long) id);
 
       Mensagem mensagem = new Mensagem("Cadastro atualizado com sucesso.");
       return mensagem;

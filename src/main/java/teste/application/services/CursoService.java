@@ -53,8 +53,9 @@ public class CursoService implements ServiceGenerics<CursoResponseDTO, CursoRequ
    }
 
    @Override
+   @Transactional(rollbackOn = Exception.class)
    public Mensagem update(int id, CursoRequestDTO cursoDTO) throws Exception {
-      repositorio.update("nomeDoCurso = ?1 where id = ?2", cursoDTO.getNomeDoCurso(), id);
+      repositorio.update("nomeDoCurso = ?1 where id = ?2", cursoDTO.getNomeDoCurso(), (long) id);
 
       Mensagem mensagem = new Mensagem("Cadastro realizado com sucesso");
       return mensagem;
