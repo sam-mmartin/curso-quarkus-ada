@@ -12,7 +12,4 @@ public interface ServiceGenerics<T1, T2> {
 
    public Mensagem create(T2 objetoDTO) throws Exception;
 
-   public Mensagem update(String matricula, T2 objetoDTO) throws Exception;
-
-   public T1 getByMatricula(String matricula) throws Exception;
 }

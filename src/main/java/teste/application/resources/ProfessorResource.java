@@ -70,7 +70,7 @@ public class ProfessorResource {
    @Path("/atualizar-cadastro/{matricula}")
    public Response atualizarCadastroProfessor(@PathParam("matricula") String matricula,
          ProfessorRequestDTO professorDTO) throws Exception {
-      Mensagem mensagem = service.update(matricula, professorDTO);
+      Mensagem mensagem = service.updateCadastro(matricula, professorDTO);
 
       return Response.ok(mensagem).build();
    }

@@ -12,12 +12,14 @@ import teste.application.dto.professor.ProfessorRequestDTO;
 import teste.application.dto.professor.ProfessorResponseDTO;
 import teste.application.interfaces.mapper.ProfessorMapper;
 import teste.application.interfaces.services.ServiceGenerics;
+import teste.application.interfaces.services.ServiceCadastroMatricula;
 import teste.domain.VOs.CPF.CPF;
 import teste.domain.professor.Professor;
 import teste.infrastructure.professor.ProfessorRepositoryJDBC;
 
 @RequestScoped
-public class ProfessorService implements ServiceGenerics<ProfessorResponseDTO, ProfessorRequestDTO> {
+public class ProfessorService implements ServiceGenerics<ProfessorResponseDTO, ProfessorRequestDTO>,
+      ServiceCadastroMatricula<ProfessorResponseDTO, ProfessorRequestDTO> {
 
    @Inject
    ProfessorRepositoryJDBC repositorio;
@@ -49,7 +51,7 @@ public class ProfessorService implements ServiceGenerics<ProfessorResponseDTO, P
 
    @Override
    @Transactional(rollbackOn = Exception.class)
-   public Mensagem update(String matricula, ProfessorRequestDTO professorDTO) throws Exception {
+   public Mensagem updateCadastro(String matricula, ProfessorRequestDTO professorDTO) throws Exception {
       Professor professor = repositorio.buscarPorMatricula(matricula);
       professor.setNome(professorDTO.getNome());
       professor.setCpf(new CPF(professorDTO.getCpf()));

@@ -12,12 +12,14 @@ import teste.application.dto.aluno.AlunoResponseDTO;
 import teste.application.interfaces.mapper.AlunoMapper;
 import teste.application.interfaces.services.ServiceAluno;
 import teste.application.interfaces.services.ServiceGenerics;
+import teste.application.interfaces.services.ServiceCadastroMatricula;
 import teste.domain.VOs.CPF.CPF;
 import teste.domain.aluno.Aluno;
 import teste.infrastructure.aluno.AlunoRepositoryJDBC;
 
 @RequestScoped
-public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponseDTO, AlunoRequestDTO> {
+public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponseDTO, AlunoRequestDTO>,
+      ServiceCadastroMatricula<AlunoResponseDTO, AlunoRequestDTO> {
 
    @Inject
    AlunoRepositoryJDBC repositorio;
@@ -55,7 +57,7 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
 
    @Override
    @Transactional(rollbackOn = Exception.class)
-   public Mensagem update(String matricula, AlunoRequestDTO alunoDTO) throws Exception {
+   public Mensagem updateCadastro(String matricula, AlunoRequestDTO alunoDTO) throws Exception {
       Aluno aluno = repositorio.buscarPorMatricula(matricula);
       aluno.setNome(alunoDTO.getNome());
       aluno.setCpf(new CPF(alunoDTO.getCpf()));
