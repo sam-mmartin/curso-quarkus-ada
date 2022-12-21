@@ -1,5 +1,6 @@
 package teste.application.resources;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
@@ -18,8 +19,11 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import teste.application.dto.Mensagem;
+import teste.application.dto.curso.CursoDisciplinaResponseDTO;
 import teste.application.dto.curso.CursoRequestDTO;
 import teste.application.dto.curso.CursoResponseDTO;
+import teste.application.dto.disciplina.DisciplinaRequestDTO;
+import teste.application.dto.disciplina.DisciplinaResponseDTO;
 import teste.application.services.CursoService;
 
 @RequestScoped
@@ -84,5 +88,45 @@ public class CursoResource {
       }
 
       return Response.ok(cursoDTO).build();
+   }
+
+   @PUT
+   @Path("/adicionar-disciplina/{id}")
+   public Response adicionarDisciplinaAoCurso(@PathParam("id") int idCurso, DisciplinaRequestDTO disciplinaDTO)
+         throws Exception {
+      Mensagem mensagem = service.addDisciplinaToCurso(idCurso, disciplinaDTO);
+      return Response.ok(mensagem).build();
+   }
+
+   @GET
+   @Path("/disciplinas/{id}")
+   public Response listarDisciplinasDoCurso(@PathParam("id") int id) throws Exception {
+      List<DisciplinaResponseDTO> disciplinasDTO = service.getDisciplinasFromCurso(id);
+
+      if (Objects.isNull(disciplinasDTO)) {
+         return Response.status(Response.Status.NOT_FOUND).build();
+      }
+
+      return Response.ok(disciplinasDTO).build();
+   }
+
+   @GET
+   @Path("/grade-curricular/{id}")
+   public Response gradeCurricular(@PathParam("id") int id) throws Exception {
+      CursoDisciplinaResponseDTO cursoDisciplina = service.getCursoAndDisciplinas(id);
+
+      if (Objects.isNull(cursoDisciplina)) {
+         return Response.status(Response.Status.NOT_FOUND).build();
+      }
+
+      return Response.ok(cursoDisciplina).build();
+   }
+
+   @GET
+   @Path("/cursos-disciplinas")
+   public Response listarTodosCursosEDisciplinas() throws Exception {
+      List<CursoDisciplinaResponseDTO> cursosDisciplinas = service.getAllCursosAndDisciplinas();
+
+      return Response.ok(cursosDisciplinas).build();
    }
 }
