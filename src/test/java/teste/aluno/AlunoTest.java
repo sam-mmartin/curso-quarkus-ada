@@ -42,7 +42,7 @@ public class AlunoTest {
             .header("Content-type", "application/json")
             .and()
             .body(requestBody).when()
-            .put("/alunos/atualizar-cadastro/1010-100")
+            .put("/alunos/1010-100")
             .then().statusCode(200);
    }
 
