@@ -3,3 +3,15 @@ INSERT INTO DISCIPLINA (id, nomeDaDisciplina) VALUES (2, 'PORTUGUÊS');
 INSERT INTO DISCIPLINA (id, nomeDaDisciplina) VALUES (3, 'QUÍMICA');
 INSERT INTO DISCIPLINA (id, nomeDaDisciplina) VALUES (4, 'FÍSICA');
 INSERT INTO DISCIPLINA (id, nomeDaDisciplina) VALUES (5, 'Fisolofia');
+
+INSERT INTO CURSO (id, nomeDoCurso) VALUES (1, 'ANÁLISES QUÍMICA');
+INSERT INTO CURSO (id, nomeDoCurso) VALUES (2, 'TÉCNICO EM INFORMÁTICA');
+INSERT INTO CURSO (id, nomeDoCurso) VALUES (3, 'REDES DE COMPUTADORES');
+INSERT INTO CURSO (id, nomeDoCurso) VALUES (4, 'TÉCNICO EM ALIMENTOS');
+INSERT INTO CURSO (id, nomeDoCurso) VALUES (5, 'TEC EM BIOTECNLOGIA');
+
+INSERT INTO CURSO_DISCIPLINA (curso_id, disciplina_id) VALUES (1, 1);
+INSERT INTO CURSO_DISCIPLINA (curso_id, disciplina_id) VALUES (2, 1);
+INSERT INTO CURSO_DISCIPLINA (curso_id, disciplina_id) VALUES (3, 1);
+INSERT INTO CURSO_DISCIPLINA (curso_id, disciplina_id) VALUES (4, 1);
+INSERT INTO CURSO_DISCIPLINA (curso_id, disciplina_id) VALUES (5, 3);
