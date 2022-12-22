@@ -67,7 +67,7 @@ public class AlunoResource {
    }
 
    @PUT
-   @Path("/atualizar-cadastro/{matricula}")
+   @Path("/{matricula}")
    public Response atualizarCadastroAluno(@PathParam("matricula") String matricula, AlunoRequestDTO alunoDTO)
          throws Exception {
       Mensagem mensagem = service.updateCadastro(matricula, alunoDTO);
