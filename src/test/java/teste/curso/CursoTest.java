@@ -58,4 +58,40 @@ public class CursoTest {
             .put("/cursos/1").then()
             .statusCode(200);
    }
+
+   @Test
+   @Order(6)
+   public void testPutDisciplinaOnCurso() {
+      String requestBody = "{\"nomeDaDisciplina\": \"Química Geral\"}";
+
+      given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody).when()
+            .post("/disciplinas").then()
+            .statusCode(201);
+
+      given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody).when()
+            .put("/cursos/adicionar-disciplina/1").then()
+            .statusCode(200);
+   }
+
+   @Test
+   @Order(7)
+   public void testGetRequestGradeCurricular() {
+      given().when().get("/cursos/grade-curricular/1").then().statusCode(200);
+   }
+
+   @Test
+   @Order(8)
+   public void testGetRequestAllCursosAndDisciplinas() {
+      given().when().get("/cursos/cursos-disciplinas").then().statusCode(200);
+   }
+
+   @Test
+   @Order(9)
+   public void testDeleteRequest() {
+      given().when().delete("/cursos/1").then().statusCode(204);
+   }
 }

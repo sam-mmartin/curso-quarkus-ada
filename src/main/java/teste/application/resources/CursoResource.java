@@ -23,7 +23,6 @@ import teste.application.dto.curso.CursoDisciplinaResponseDTO;
 import teste.application.dto.curso.CursoRequestDTO;
 import teste.application.dto.curso.CursoResponseDTO;
 import teste.application.dto.disciplina.DisciplinaRequestDTO;
-import teste.application.dto.disciplina.DisciplinaResponseDTO;
 import teste.application.services.CursoService;
 
 @RequestScoped
@@ -96,18 +95,6 @@ public class CursoResource {
          throws Exception {
       Mensagem mensagem = service.addDisciplinaToCurso(idCurso, disciplinaDTO);
       return Response.ok(mensagem).build();
-   }
-
-   @GET
-   @Path("/disciplinas/{id}")
-   public Response listarDisciplinasDoCurso(@PathParam("id") int id) throws Exception {
-      List<DisciplinaResponseDTO> disciplinasDTO = service.getDisciplinasFromCurso(id);
-
-      if (Objects.isNull(disciplinasDTO)) {
-         return Response.status(Response.Status.NOT_FOUND).build();
-      }
-
-      return Response.ok(disciplinasDTO).build();
    }
 
    @GET
