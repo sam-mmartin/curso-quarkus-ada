@@ -1,4 +1,4 @@
-package teste.domain.VOs.Matricula;
+package teste.domain.VOs.matricula;
 
 import javax.persistence.AttributeConverter;
 

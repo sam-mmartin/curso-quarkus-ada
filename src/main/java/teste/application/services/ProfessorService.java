@@ -13,7 +13,6 @@ import teste.application.dto.professor.ProfessorResponseDTO;
 import teste.application.interfaces.mapper.ProfessorMapper;
 import teste.application.interfaces.services.ServiceGenerics;
 import teste.application.interfaces.services.ServiceCadastroMatricula;
-import teste.domain.VOs.CPF.CPF;
 import teste.domain.professor.Professor;
 import teste.infrastructure.professor.ProfessorRepositoryJDBC;
 
@@ -40,7 +39,7 @@ public class ProfessorService implements ServiceGenerics<ProfessorResponseDTO, P
    @Override
    @Transactional(rollbackOn = Exception.class)
    public Mensagem create(ProfessorRequestDTO professorDTO) throws Exception {
-      Professor novo = professorDTO.criaProfessor();
+      Professor novo = professorMapper.toEntity(professorDTO);
 
       repositorio.contratar(novo);
       Mensagem mensagem = new Mensagem(
@@ -54,7 +53,7 @@ public class ProfessorService implements ServiceGenerics<ProfessorResponseDTO, P
    public Mensagem updateCadastro(String matricula, ProfessorRequestDTO professorDTO) throws Exception {
       Professor professor = repositorio.buscarPorMatricula(matricula);
       professor.setNome(professorDTO.getNome());
-      professor.setCpf(new CPF(professorDTO.getCpf()));
+      professor.setCpf(professorDTO.getCpf());
 
       repositorio.atualizarCadastroDoProfessor(professor);
       Mensagem mensagem = new Mensagem("Cadastro atualizado com sucesso.");

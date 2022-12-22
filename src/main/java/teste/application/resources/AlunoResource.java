@@ -1,9 +1,11 @@
 package teste.application.resources;
 
 import java.util.Objects;
-
+import java.util.Set;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,6 +22,7 @@ import teste.application.dto.Mensagem;
 import teste.application.dto.aluno.AlunoRequestDTO;
 import teste.application.dto.aluno.AlunoResponseDTO;
 import teste.application.services.AlunoService;
+import teste.application.validation.Result;
 
 @RequestScoped
 @Tag(name = "Aluno")
@@ -30,6 +33,9 @@ public class AlunoResource {
 
    @Inject
    AlunoService service;
+
+   @Inject
+   Validator validator;
 
    @GET
    public Response listarTodosAlunos() throws Exception {
@@ -63,6 +69,12 @@ public class AlunoResource {
 
    @POST
    public Response matricularAluno(AlunoRequestDTO alunoDTO) throws Exception {
+      Set<ConstraintViolation<AlunoRequestDTO>> violations = validator.validate(alunoDTO);
+
+      if (!violations.isEmpty()) {
+         return Response.status(Response.Status.BAD_REQUEST).entity(new Result(violations)).build();
+      }
+
       return Response.status(Response.Status.CREATED).entity(service.create(alunoDTO)).build();
    }
 
@@ -70,8 +82,13 @@ public class AlunoResource {
    @Path("/{matricula}")
    public Response atualizarCadastroAluno(@PathParam("matricula") String matricula, AlunoRequestDTO alunoDTO)
          throws Exception {
-      Mensagem mensagem = service.updateCadastro(matricula, alunoDTO);
+      Set<ConstraintViolation<AlunoRequestDTO>> violations = validator.validate(alunoDTO);
 
+      if (!violations.isEmpty()) {
+         return Response.status(Response.Status.BAD_REQUEST).entity(new Result(violations)).build();
+      }
+
+      Mensagem mensagem = service.updateCadastro(matricula, alunoDTO);
       return Response.ok(mensagem).build();
    }
 

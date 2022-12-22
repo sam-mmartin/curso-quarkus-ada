@@ -4,8 +4,8 @@ import java.util.Random;
 
 import javax.enterprise.context.RequestScoped;
 
-import teste.domain.VOs.Matricula.Matricula;
-import teste.domain.VOs.Matricula.MatriculaService;
+import teste.domain.VOs.matricula.Matricula;
+import teste.domain.VOs.matricula.MatriculaService;
 
 @RequestScoped
 public class MatriculaResource implements MatriculaService {

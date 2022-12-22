@@ -2,8 +2,10 @@ package teste.aluno;
 
 import static io.restassured.RestAssured.given;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.response.Response;
 
 @QuarkusTest
 public class AlunoTest {
@@ -54,5 +56,77 @@ public class AlunoTest {
    @Test
    public void testRematriculaAluno() {
       given().when().put("/alunos/rematricular/3030-300").then().statusCode(200);
+   }
+
+   @Test
+   public void testPostResquestAlunoSemNome() {
+      String requestBody = "{\"nome\": \"\", \"cpf\": \"100.200.300-40\"}";
+
+      given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody)
+            .when().post("/alunos")
+            .then().statusCode(400);
+   }
+
+   @Test
+   public void testPostResquestAlunoSemCPF() {
+      String requestBody = "{\"nome\": \"Mallu Estácio\", \"cpf\": \"\"}";
+
+      given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody)
+            .when().post("/alunos")
+            .then().statusCode(400);
+   }
+
+   @Test
+   public void testPutResquestAlunoSemNome() {
+      String requestBody = "{\"nome\": \"\", \"cpf\": \"100.200.300-40\"}";
+
+      given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody)
+            .when().put("/alunos/2")
+            .then().statusCode(400);
+   }
+
+   @Test
+   public void testPutResquestAlunoSemCPF() {
+      String requestBody = "{\"nome\": \"Mallu Estácio\", \"cpf\": \"\"}";
+
+      given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody)
+            .when().put("/alunos/3")
+            .then().statusCode(400);
+   }
+
+   @Test
+   public void testPostResquestAlunoNomeQuantidadeCaracteresInsuficiente() {
+      String requestBody = "{\"nome\": \"Ma\", \"cpf\": \"001.002.003-04\"}";
+
+      Response response = given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody)
+            .when().post("/alunos")
+            .then().extract().response();
+
+      Assertions.assertEquals("O nome do aluno deve possuir no mínimo 3 e no máximo 50 caracteres",
+            response.jsonPath().getString("texto"));
+   }
+
+   @Test
+   public void testPostResquestAlunoCPFInvalido() {
+      String requestBody = "{\"nome\": \"Mallu Estácio\", \"cpf\": \"001002s003\"}";
+
+      Response response = given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody)
+            .when().post("/alunos")
+            .then().extract().response();
+
+      Assertions.assertEquals("CPF inválido",
+            response.jsonPath().getString("texto"));
    }
 }
