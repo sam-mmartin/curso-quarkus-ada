@@ -1,3 +1,7 @@
+INSERT INTO ALUNO (id, nome, cpf, matricula, status) VALUES (1, 'Juliana Cintra', '001.002.003-04', '1010-100', 1);
+INSERT INTO ALUNO (id, nome, cpf, matricula, status) VALUES (2, 'Mônica Priscylla', '111.222.333-44', '2020-200', 1);
+INSERT INTO ALUNO (id, nome, cpf, matricula, status) VALUES (3, 'Mallu Estácio', '101.202.303-40', '3030-300', 0);
+
 INSERT INTO DISCIPLINA (id, nomeDaDisciplina) VALUES (1, 'MATEMÁTICA');
 INSERT INTO DISCIPLINA (id, nomeDaDisciplina) VALUES (2, 'PORTUGUÊS');
 INSERT INTO DISCIPLINA (id, nomeDaDisciplina) VALUES (3, 'QUÍMICA');
