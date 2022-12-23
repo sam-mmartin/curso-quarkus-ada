@@ -17,6 +17,8 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import teste.application.dto.Mensagem;
+import teste.application.dto.curso.CursoRequestDTO;
+import teste.application.dto.disciplina.DisciplinaRequestDTO;
 import teste.application.dto.professor.ProfessorRequestDTO;
 import teste.application.dto.professor.ProfessorResponseDTO;
 import teste.application.services.ProfessorService;
@@ -71,6 +73,58 @@ public class ProfessorResource {
    public Response atualizarCadastroProfessor(@PathParam("matricula") String matricula,
          ProfessorRequestDTO professorDTO) throws Exception {
       Mensagem mensagem = service.updateCadastro(matricula, professorDTO);
+
+      return Response.ok(mensagem).build();
+   }
+
+   @PUT
+   @Path("/lecionar-disciplina/{matricula}")
+   public Response lecionarDisciplina(@PathParam("matricula") String matricula,
+         DisciplinaRequestDTO disciplinaRequestDTO) throws Exception {
+      Mensagem mensagem = service.teachDiscipline(matricula, disciplinaRequestDTO);
+
+      if (Objects.isNull(mensagem)) {
+         return Response.status(Response.Status.NOT_FOUND).build();
+      }
+
+      return Response.ok(mensagem).build();
+   }
+
+   @PUT
+   @Path("/remover-disciplina/{matricula}")
+   public Response pararDeLecionarDisciplina(@PathParam("matricula") String matricula,
+         DisciplinaRequestDTO disciplinaRequestDTO) throws Exception {
+      Mensagem mensagem = service.stopTeachingDiscipline(matricula, disciplinaRequestDTO);
+
+      if (Objects.isNull(mensagem)) {
+         return Response.status(Response.Status.NOT_FOUND).build();
+      }
+
+      return Response.ok(mensagem).build();
+   }
+
+   @PUT
+   @Path("/adicionar-curso/{matricula}")
+   public Response adicionarCurso(@PathParam("matricula") String matricula,
+         CursoRequestDTO cursoDTO) throws Exception {
+      Mensagem mensagem = service.addCurso(matricula, cursoDTO);
+
+      if (Objects.isNull(mensagem)) {
+         return Response.status(Response.Status.NOT_FOUND).build();
+      }
+
+      return Response.ok(mensagem).build();
+   }
+
+   @PUT
+   @Path("/remover-curso/{matricula}")
+   public Response removerCurso(@PathParam("matricula") String matricula,
+         CursoRequestDTO cursoDTO) throws Exception {
+      Mensagem mensagem = service.removeCurso(matricula, cursoDTO);
+
+      if (Objects.isNull(mensagem)) {
+         return Response.status(Response.Status.NOT_FOUND).build();
+      }
 
       return Response.ok(mensagem).build();
    }

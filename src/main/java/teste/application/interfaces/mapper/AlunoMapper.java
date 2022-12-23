@@ -13,12 +13,13 @@ import teste.domain.aluno.Aluno;
 public interface AlunoMapper {
 
    @Mapping(target = "matricula", source = "matricula.numero")
+   @Mapping(target = "status", source = "estado")
    AlunoResponseDTO toResource(Aluno aluno);
 
    List<AlunoResponseDTO> listToResource(List<Aluno> alunos);
 
    @Mapping(target = "id", ignore = true)
    @Mapping(target = "matricula", ignore = true)
-   @Mapping(target = "status", ignore = true)
+   @Mapping(target = "estado", ignore = true)
    Aluno toEntity(AlunoRequestDTO alunoDTO);
 }

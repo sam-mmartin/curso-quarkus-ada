@@ -45,4 +45,48 @@ public class ProfessorTest {
             .put("/professores/1000-000").then()
             .statusCode(200);
    }
+
+   @Test
+   public void testPutRequestLecionarDisciplina() {
+      String requestBody = "{\"nomeDaDisciplina\": \"MATEMÁTICA\"}";
+
+      given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody).when()
+            .put("/professores/lecionar-disciplina/1000-000").then()
+            .statusCode(200);
+   }
+
+   @Test
+   public void testPutRequestPararDeLecionarDisciplina() {
+      String requestBody = "{\"nomeDaDisciplina\": \"QUÍMICA\"}";
+
+      given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody).when()
+            .put("/professores/remover-disciplina/1000-000").then()
+            .statusCode(200);
+   }
+
+   @Test
+   public void testPutRequestAdicionarCurso() {
+      String requestBody = "{\"nomeDoCurso\": \"ANÁLISES QUÍMICA\"}";
+
+      given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody).when()
+            .put("/professores/adicionar-curso/1000-000").then()
+            .statusCode(200);
+   }
+
+   @Test
+   public void testPutRequestRemoverCurso() {
+      String requestBody = "{\"nomeDoCurso\": \"TÉCNICO EM INFORMÁTICA\"}";
+
+      given()
+            .header("Content-type", "application/json")
+            .and().body(requestBody).when()
+            .put("/professores/remover-curso/1000-000").then()
+            .statusCode(200);
+   }
 }

@@ -13,12 +13,15 @@ import teste.domain.professor.Professor;
 public interface ProfessorMapper {
 
    @Mapping(target = "matricula", source = "matricula.numero")
+   @Mapping(target = "status", source = "estado")
    ProfessorResponseDTO toResource(Professor professor);
 
    List<ProfessorResponseDTO> listToResource(List<Professor> professores);
 
    @Mapping(target = "id", ignore = true)
    @Mapping(target = "matricula", ignore = true)
-   @Mapping(target = "status", ignore = true)
+   @Mapping(target = "estado", ignore = true)
+   @Mapping(target = "cursosLecionados", ignore = true)
+   @Mapping(target = "disciplinasLecionadas", ignore = true)
    Professor toEntity(ProfessorRequestDTO professorDTO);
 }

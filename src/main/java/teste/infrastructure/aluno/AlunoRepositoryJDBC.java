@@ -66,7 +66,7 @@ public class AlunoRepositoryJDBC implements RepositoryAluno {
    @Transactional
    public void matricular(Aluno aluno) throws Exception {
       try {
-         aluno.setStatus(true);
+         aluno.setEstado(true);
          aluno.setMatricula(mr.gerarMatricula());
 
          em.persist(aluno);
@@ -78,7 +78,7 @@ public class AlunoRepositoryJDBC implements RepositoryAluno {
    @Override
    public void rematricular(int id) throws Exception {
       Aluno aluno = em.find(Aluno.class, id);
-      aluno.setStatus(true);
+      aluno.setEstado(true);
       update(aluno);
    }
 
@@ -90,7 +90,7 @@ public class AlunoRepositoryJDBC implements RepositoryAluno {
    @Override
    public void cancelarMatricula(int id) throws Exception {
       Aluno aluno = em.find(Aluno.class, id);
-      aluno.setStatus(false);
+      aluno.setEstado(false);
       update(aluno);
    }
 

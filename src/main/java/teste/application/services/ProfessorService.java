@@ -8,12 +8,18 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import teste.application.dto.Mensagem;
+import teste.application.dto.curso.CursoRequestDTO;
+import teste.application.dto.disciplina.DisciplinaRequestDTO;
 import teste.application.dto.professor.ProfessorRequestDTO;
 import teste.application.dto.professor.ProfessorResponseDTO;
 import teste.application.interfaces.mapper.ProfessorMapper;
 import teste.application.interfaces.services.ServiceGenerics;
 import teste.application.interfaces.services.ServiceCadastroMatricula;
+import teste.domain.curso.Curso;
+import teste.domain.disciplina.Disciplina;
 import teste.domain.professor.Professor;
+import teste.infrastructure.curso.CursoRepositoryJDBC;
+import teste.infrastructure.disciplina.DisciplinaRepositoryJDBC;
 import teste.infrastructure.professor.ProfessorRepositoryJDBC;
 
 @RequestScoped
@@ -22,6 +28,12 @@ public class ProfessorService implements ServiceGenerics<ProfessorResponseDTO, P
 
    @Inject
    ProfessorRepositoryJDBC repositorio;
+
+   @Inject
+   DisciplinaRepositoryJDBC disciplinaRepositorio;
+
+   @Inject
+   CursoRepositoryJDBC cursoRepositorio;
 
    @Inject
    ProfessorMapper professorMapper;
@@ -71,4 +83,73 @@ public class ProfessorService implements ServiceGenerics<ProfessorResponseDTO, P
       return professorMapper.toResource(professor);
    }
 
+   @Transactional(rollbackOn = Exception.class)
+   public Mensagem teachDiscipline(String matricula, DisciplinaRequestDTO disciplinaDTO) throws Exception {
+      Professor professor = repositorio.buscarPorMatricula(matricula);
+      Disciplina disciplina = disciplinaRepositorio.buscarPorDisciplina(disciplinaDTO.getNomeDaDisciplina());
+
+      if (Objects.isNull(professor) || Objects.isNull(disciplina)) {
+         return null;
+      }
+
+      repositorio.lecionarDisciplina(professor.getId(), disciplina);
+      Mensagem mensagem = new Mensagem("Disciplina "
+            + disciplina.getNomeDaDisciplina()
+            + " adicionada ao quadro de disciplinas lecionadas do professor: "
+            + professor.getNome()
+            + ". Matrícula: " + professor.getMatricula().getNumero());
+      return mensagem;
+   }
+
+   @Transactional(rollbackOn = Exception.class)
+   public Mensagem stopTeachingDiscipline(String matricula, DisciplinaRequestDTO disciplinaDTO) throws Exception {
+      Professor professor = repositorio.buscarPorMatricula(matricula);
+      Disciplina disciplina = disciplinaRepositorio.buscarPorDisciplina(disciplinaDTO.getNomeDaDisciplina());
+
+      if (Objects.isNull(professor) || Objects.isNull(disciplina)) {
+         return null;
+      }
+
+      repositorio.pararDeLecionarDisciplina(professor.getId(), disciplina);
+      Mensagem mensagem = new Mensagem("Disciplina "
+            + disciplina.getNomeDaDisciplina()
+            + " removida do quadro de disciplinas lecionadas do professor: "
+            + professor.getNome()
+            + ". Matrícula: " + professor.getMatricula().getNumero());
+      return mensagem;
+   }
+
+   @Transactional(rollbackOn = Exception.class)
+   public Mensagem addCurso(String matricula, CursoRequestDTO cursoDTO) throws Exception {
+      Professor professor = repositorio.buscarPorMatricula(matricula);
+      Curso curso = cursoRepositorio.buscarPorNomeDoCurso(cursoDTO.getNomeDoCurso());
+
+      if (Objects.isNull(professor) || Objects.isNull(curso)) {
+         return null;
+      }
+
+      repositorio.adicionarCurso(professor.getId(), curso);
+      ;
+      Mensagem mensagem = new Mensagem("Professor: " + professor.getNome()
+            + " Matricula: " + professor.getMatricula().getNumero()
+            + ". Adicionado ao quadro de professores do Curso" + curso.getNomeDoCurso());
+      return mensagem;
+   }
+
+   @Transactional(rollbackOn = Exception.class)
+   public Mensagem removeCurso(String matricula, CursoRequestDTO cursoDTO) throws Exception {
+      Professor professor = repositorio.buscarPorMatricula(matricula);
+      Curso curso = cursoRepositorio.buscarPorNomeDoCurso(cursoDTO.getNomeDoCurso());
+
+      if (Objects.isNull(professor) || Objects.isNull(curso)) {
+         return null;
+      }
+
+      repositorio.removerCurso(professor.getId(), curso);
+      ;
+      Mensagem mensagem = new Mensagem("Professor: " + professor.getNome()
+            + " Matricula: " + professor.getMatricula().getNumero()
+            + ". Removido do quadro de professores do Curso" + curso.getNomeDoCurso());
+      return mensagem;
+   }
 }

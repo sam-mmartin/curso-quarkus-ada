@@ -15,5 +15,7 @@ public class AlunoRequestDTO {
    private String nome;
    @NotBlank(message = "O CPF do aluno é obrigatório")
    private String cpf;
+   @NotBlank(message = "O Curso é obrigatório")
+   private String nomeDoCurso;
 
 }
