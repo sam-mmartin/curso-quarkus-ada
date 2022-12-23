@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import teste.application.dto.Mensagem;
+import teste.application.dto.aluno.AlunoCursoRequestDTO;
 import teste.application.dto.aluno.AlunoRequestDTO;
 import teste.application.dto.aluno.AlunoResponseDTO;
 import teste.application.services.AlunoService;
@@ -68,8 +69,8 @@ public class AlunoResource {
    }
 
    @POST
-   public Response matricularAluno(AlunoRequestDTO alunoDTO) throws Exception {
-      Set<ConstraintViolation<AlunoRequestDTO>> violations = validator.validate(alunoDTO);
+   public Response matricularAluno(AlunoCursoRequestDTO alunoDTO) throws Exception {
+      Set<ConstraintViolation<AlunoCursoRequestDTO>> violations = validator.validate(alunoDTO);
 
       if (!violations.isEmpty()) {
          return Response.status(Response.Status.BAD_REQUEST).entity(new Result(violations)).build();

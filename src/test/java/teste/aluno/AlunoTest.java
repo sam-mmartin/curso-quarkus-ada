@@ -27,7 +27,11 @@ public class AlunoTest {
 
    @Test
    public void testPostRequest() {
-      String requestBody = "{\"nome\": \"Laine Araujo\", \"cpf\": \"100.200.300-40\"}";
+      String requestBody = "{"
+            + "\"nome\": \"Laine Araujo\","
+            + " \"cpf\": \"001.002.003-04\","
+            + " \"curso\": \"ANÁLISES QUÍMICA\""
+            + "}";
 
       given()
             .header("Content-type", "application/json")
@@ -38,7 +42,7 @@ public class AlunoTest {
 
    @Test
    public void testPutRequest() {
-      String requestBody = "{\"nome\": \"Juliana Sintra\", \"cpf\": \"001.002.003-04\"}";
+      String requestBody = "{\"nome\": \"Juliana Sintra\", \"cpf\": \"100.200.300-40\"}";
 
       given()
             .header("Content-type", "application/json")

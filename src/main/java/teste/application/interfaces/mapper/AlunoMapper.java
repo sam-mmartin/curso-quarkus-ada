@@ -5,6 +5,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import teste.application.dto.aluno.AlunoCursoRequestDTO;
 import teste.application.dto.aluno.AlunoRequestDTO;
 import teste.application.dto.aluno.AlunoResponseDTO;
 import teste.domain.aluno.Aluno;
@@ -21,5 +22,12 @@ public interface AlunoMapper {
    @Mapping(target = "id", ignore = true)
    @Mapping(target = "matricula", ignore = true)
    @Mapping(target = "estado", ignore = true)
-   Aluno toEntity(AlunoRequestDTO alunoDTO);
+   @Mapping(target = "cursoMatriculado", ignore = true)
+   Aluno toEntityUpdate(AlunoRequestDTO alunoDTO);
+
+   @Mapping(target = "id", ignore = true)
+   @Mapping(target = "matricula", ignore = true)
+   @Mapping(target = "estado", ignore = true)
+   @Mapping(target = "cursoMatriculado", ignore = true)
+   Aluno toEntityCreate(AlunoCursoRequestDTO alunoDTO);
 }

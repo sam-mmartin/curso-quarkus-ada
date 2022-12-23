@@ -9,11 +9,12 @@ import lombok.RequiredArgsConstructor;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class AlunoRequestDTO {
+public class AlunoCursoRequestDTO {
 
    @NotBlank(message = "O nome do aluno é obrigatório")
    private String nome;
    @NotBlank(message = "O CPF do aluno é obrigatório")
    private String cpf;
-
+   @NotBlank(message = "É necessário informar o nome do curso")
+   private String curso;
 }

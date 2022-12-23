@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import teste.application.dto.Mensagem;
+import teste.application.dto.aluno.AlunoCursoRequestDTO;
 import teste.application.dto.aluno.AlunoRequestDTO;
 import teste.application.dto.aluno.AlunoResponseDTO;
 import teste.application.interfaces.mapper.AlunoMapper;
@@ -15,14 +16,19 @@ import teste.application.interfaces.services.ServiceGenerics;
 import teste.application.validation.Result;
 import teste.application.interfaces.services.ServiceCadastroMatricula;
 import teste.domain.aluno.Aluno;
+import teste.domain.curso.Curso;
 import teste.infrastructure.aluno.AlunoRepositoryJDBC;
+import teste.infrastructure.curso.CursoRepositoryJDBC;
 
 @RequestScoped
-public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponseDTO, AlunoRequestDTO>,
+public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponseDTO, AlunoCursoRequestDTO>,
       ServiceCadastroMatricula<AlunoResponseDTO, AlunoRequestDTO> {
 
    @Inject
    AlunoRepositoryJDBC repositorio;
+
+   @Inject
+   CursoRepositoryJDBC cursoRepositorio;
 
    @Inject
    AlunoMapper alunoMapper;
@@ -45,16 +51,19 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
 
    @Override
    @Transactional(rollbackOn = Exception.class)
-   public Mensagem create(AlunoRequestDTO alunoDTO) throws Exception {
+   public Mensagem create(AlunoCursoRequestDTO alunoDTO) throws Exception {
       Mensagem mensagem;
 
       try {
-         Aluno novo = alunoMapper.toEntity(alunoDTO);
+         Aluno novo = alunoMapper.toEntityCreate(alunoDTO);
+         Curso curso = cursoRepositorio.buscarPorNomeDoCurso(alunoDTO.getCurso());
+         novo.setCursoMatriculado(curso);
 
          repositorio.matricular(novo);
          mensagem = new Mensagem(
-               "Aluno: " + novo.getNome() + " matriculado com sucesso. "
-                     + "Nº de matricula: " + novo.getMatricula().getNumero());
+               "Aluno: " + novo.getNome()
+                     + " matriculado com sucesso no curso " + curso.getNomeDoCurso()
+                     + ". Nº de matricula: " + novo.getMatricula().getNumero());
 
       } catch (ConstraintViolationException e) {
          Result result = new Result(e.getConstraintViolations());
