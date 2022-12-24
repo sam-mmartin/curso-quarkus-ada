@@ -26,7 +26,10 @@ public class ProfessorTest {
 
    @Test
    public void testPostRequest() {
-      String requestBody = "{\"nome\": \"Andrew Mackbow\", \"cpf\": \"999.999.999-99\"}";
+      String requestBody = "{"
+            + "\"nome\": \"Andrew Mackbow\","
+            + "\"cpf\": \"803.927.250-53\""
+            + "}";
 
       given()
             .header("Content-type", "application/json")
@@ -37,7 +40,7 @@ public class ProfessorTest {
 
    @Test
    public void testPutRequest() {
-      String requestBody = "{\"nome\": \"Sam M. Martin\", \"cpf\": \"004.005.003-38\"}";
+      String requestBody = "{\"nome\": \"Sam M. Martin\", \"cpf\": \"803.927.250-53\"}";
 
       given()
             .header("Content-type", "application/json")

@@ -6,14 +6,16 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+
 import teste.application.dto.Mensagem;
 import teste.application.dto.aluno.AlunoCursoRequestDTO;
 import teste.application.dto.aluno.AlunoRequestDTO;
 import teste.application.dto.aluno.AlunoResponseDTO;
+import teste.application.exceptions.ErrorResponse;
 import teste.application.interfaces.mapper.AlunoMapper;
 import teste.application.interfaces.services.ServiceAluno;
 import teste.application.interfaces.services.ServiceGenerics;
-import teste.application.validation.Result;
 import teste.application.interfaces.services.ServiceCadastroMatricula;
 import teste.domain.aluno.Aluno;
 import teste.domain.curso.Curso;
@@ -51,6 +53,7 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
 
    @Override
    @Transactional(rollbackOn = Exception.class)
+   @Valid
    public Mensagem create(AlunoCursoRequestDTO alunoDTO) throws Exception {
       Mensagem mensagem;
 
@@ -66,7 +69,7 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
                      + ". Nº de matricula: " + novo.getMatricula().getNumero());
 
       } catch (ConstraintViolationException e) {
-         Result result = new Result(e.getConstraintViolations());
+         ErrorResponse result = new ErrorResponse(e.getConstraintViolations());
          mensagem = new Mensagem(result.getMessage());
       }
 
@@ -75,13 +78,22 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
 
    @Override
    @Transactional(rollbackOn = Exception.class)
+   @Valid
    public Mensagem updateCadastro(String matricula, AlunoRequestDTO alunoDTO) throws Exception {
-      Aluno aluno = repositorio.buscarPorMatricula(matricula);
-      aluno.setNome(alunoDTO.getNome());
-      aluno.setCpf(alunoDTO.getCpf());
+      Mensagem mensagem;
 
-      repositorio.atualizarCadastroDoAluno(aluno);
-      Mensagem mensagem = new Mensagem("Cadastro atualizado com sucesso.");
+      try {
+         Aluno aluno = repositorio.buscarPorMatricula(matricula);
+         aluno.setNome(alunoDTO.getNome());
+         aluno.setCpf(alunoDTO.getCpf());
+
+         repositorio.atualizarCadastroDoAluno(aluno);
+         mensagem = new Mensagem("Cadastro atualizado com sucesso.");
+      } catch (ConstraintViolationException e) {
+         ErrorResponse result = new ErrorResponse(e.getConstraintViolations());
+         mensagem = new Mensagem(result.getMessage());
+      }
+
       return mensagem;
    }
 

@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AlunoRequestDTO {
 
-   @NotBlank(message = "O nome do aluno é obrigatório")
+   @NotBlank(message = "É necessário informar o nome")
    private String nome;
-   @NotBlank(message = "O CPF do aluno é obrigatório")
+   @NotBlank(message = "É necessário informar o CPF")
    private String cpf;
 
 }

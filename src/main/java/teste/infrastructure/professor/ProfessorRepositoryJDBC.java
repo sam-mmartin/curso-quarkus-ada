@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -12,20 +11,17 @@ import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import teste.application.exceptions.CustomConstraintException;
 import teste.domain.curso.Curso;
 import teste.domain.disciplina.Disciplina;
 import teste.domain.professor.Professor;
 import teste.domain.professor.RepositoryProfessor;
-import teste.infrastructure.MatriculaResource;
 
 @RequestScoped
 public class ProfessorRepositoryJDBC implements RepositoryProfessor {
 
    @PersistenceContext
    EntityManager em;
-
-   @Inject
-   MatriculaResource mr;
 
    @Override
    public List<Professor> listarTodos() throws Exception {
@@ -42,7 +38,7 @@ public class ProfessorRepositoryJDBC implements RepositoryProfessor {
    }
 
    @Override
-   public Professor buscarPorMatricula(String matricula) throws Exception {
+   public Professor buscarPorMatricula(String matricula) throws CustomConstraintException {
       String nameQuery = "CONSULTAR_PROFESSOR_POR_MATRICULA";
       TypedQuery<Professor> query = em.createNamedQuery(nameQuery, Professor.class)
             .setParameter("matricula", matricula);
@@ -50,9 +46,9 @@ public class ProfessorRepositoryJDBC implements RepositoryProfessor {
       try {
          return query.getSingleResult();
       } catch (NoResultException e) {
-         throw new Exception(e);
+         throw new CustomConstraintException(e.getMessage());
       } catch (PersistenceException e) {
-         throw new Exception(e);
+         throw new CustomConstraintException(e.getMessage());
       }
    }
 
@@ -68,18 +64,10 @@ public class ProfessorRepositoryJDBC implements RepositoryProfessor {
    @Override
    @Transactional
    public void contratar(Professor professor) throws Exception {
-      try {
-         professor.setEstado(true);
-         professor.setMatricula(mr.gerarMatricula());
-
-         em.persist(professor);
-      } catch (PersistenceException e) {
-         throw new Exception(e);
-      }
+      em.persist(professor);
    }
 
    @Override
-   @Transactional
    public void atualizarCadastroDoProfessor(Professor professor) throws Exception {
       update(professor);
    }
@@ -91,11 +79,11 @@ public class ProfessorRepositoryJDBC implements RepositoryProfessor {
    }
 
    @Transactional
-   private void update(Professor professor) throws Exception {
+   public void update(Professor professor) throws Exception {
       try {
          em.merge(professor);
       } catch (PersistenceException e) {
-         throw new Exception(e);
+         throw new CustomConstraintException(e.getMessage());
       }
    }
 

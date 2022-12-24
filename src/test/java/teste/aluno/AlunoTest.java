@@ -29,7 +29,7 @@ public class AlunoTest {
    public void testPostRequest() {
       String requestBody = "{"
             + "\"nome\": \"Laine Araujo\","
-            + " \"cpf\": \"001.002.003-04\","
+            + " \"cpf\": \"830.173.730-10\","
             + " \"curso\": \"ANÁLISES QUÍMICA\""
             + "}";
 
@@ -42,7 +42,7 @@ public class AlunoTest {
 
    @Test
    public void testPutRequest() {
-      String requestBody = "{\"nome\": \"Juliana Sintra\", \"cpf\": \"100.200.300-40\"}";
+      String requestBody = "{\"nome\": \"Juliana Sintra\", \"cpf\": \"546.212.310-81\"}";
 
       given()
             .header("Content-type", "application/json")
@@ -64,7 +64,11 @@ public class AlunoTest {
 
    @Test
    public void testPostResquestAlunoSemNome() {
-      String requestBody = "{\"nome\": \"\", \"cpf\": \"100.200.300-40\"}";
+      String requestBody = "{"
+            + "\"nome\": \"\","
+            + " \"cpf\": \"001.002.003-04\","
+            + " \"curso\": \"ANÁLISES QUÍMICA\""
+            + "}";
 
       given()
             .header("Content-type", "application/json")
@@ -75,7 +79,11 @@ public class AlunoTest {
 
    @Test
    public void testPostResquestAlunoSemCPF() {
-      String requestBody = "{\"nome\": \"Mallu Estácio\", \"cpf\": \"\"}";
+      String requestBody = "{"
+            + "\"nome\": \"Mallu Estácio\","
+            + " \"cpf\": \"\","
+            + " \"curso\": \"ANÁLISES QUÍMICA\""
+            + "}";
 
       given()
             .header("Content-type", "application/json")
@@ -108,7 +116,11 @@ public class AlunoTest {
 
    @Test
    public void testPostResquestAlunoNomeQuantidadeCaracteresInsuficiente() {
-      String requestBody = "{\"nome\": \"Ma\", \"cpf\": \"001.002.003-04\"}";
+      String requestBody = "{"
+            + "\"nome\": \"La\","
+            + " \"cpf\": \"546.212.310-81\","
+            + " \"curso\": \"ANÁLISES QUÍMICA\""
+            + "}";
 
       Response response = given()
             .header("Content-type", "application/json")
@@ -122,7 +134,12 @@ public class AlunoTest {
 
    @Test
    public void testPostResquestAlunoCPFInvalido() {
-      String requestBody = "{\"nome\": \"Mallu Estácio\", \"cpf\": \"001002s003\"}";
+      String requestBody = "{"
+            + "\"nome\": \"Laine Araujo\","
+            + " \"cpf\": \"001.002.003.04\","
+            + " \"curso\": \"ANÁLISES QUÍMICA\""
+            + "}";
+      ;
 
       Response response = given()
             .header("Content-type", "application/json")

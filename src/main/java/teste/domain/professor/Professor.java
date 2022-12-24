@@ -14,11 +14,13 @@ import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.br.CPF;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import teste.domain.VOs.matricula.Matricula;
 import teste.domain.VOs.matricula.MatriculaAttributeConverter;
 import teste.domain.curso.Curso;
@@ -30,8 +32,9 @@ import teste.domain.disciplina.Disciplina;
       @NamedNativeQuery(name = "CONSULTAR_PROFESSORES", query = "SELECT * FROM PROFESSOR", resultClass = Professor.class),
       @NamedNativeQuery(name = "CONSULTAR_PROFESSOR_POR_MATRICULA", query = "SELECT * FROM PROFESSOR WHERE matricula = :matricula", resultClass = Professor.class)
 })
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class Professor {
 
    @Id
@@ -39,6 +42,7 @@ public class Professor {
    private int id;
 
    @NotBlank(message = "O nome é obrigatório")
+   @Size(min = 3, max = 50, message = "O nome do professor deve possuir no mínimo 3 e no máximo 50 caracteres")
    private String nome;
 
    @NotBlank(message = "O CPF é obrigatório")
@@ -55,9 +59,6 @@ public class Professor {
 
    @ManyToMany(mappedBy = "professores", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
    private List<Disciplina> disciplinasLecionadas;
-
-   public Professor() {
-   }
 
    public Professor(String nome, String cpf) {
       this.nome = nome;

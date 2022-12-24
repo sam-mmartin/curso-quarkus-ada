@@ -22,8 +22,8 @@ import teste.application.dto.Mensagem;
 import teste.application.dto.aluno.AlunoCursoRequestDTO;
 import teste.application.dto.aluno.AlunoRequestDTO;
 import teste.application.dto.aluno.AlunoResponseDTO;
+import teste.application.exceptions.ErrorResponse;
 import teste.application.services.AlunoService;
-import teste.application.validation.Result;
 
 @RequestScoped
 @Tag(name = "Aluno")
@@ -73,7 +73,7 @@ public class AlunoResource {
       Set<ConstraintViolation<AlunoCursoRequestDTO>> violations = validator.validate(alunoDTO);
 
       if (!violations.isEmpty()) {
-         return Response.status(Response.Status.BAD_REQUEST).entity(new Result(violations)).build();
+         return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(violations)).build();
       }
 
       return Response.status(Response.Status.CREATED).entity(service.create(alunoDTO)).build();
@@ -86,7 +86,7 @@ public class AlunoResource {
       Set<ConstraintViolation<AlunoRequestDTO>> violations = validator.validate(alunoDTO);
 
       if (!violations.isEmpty()) {
-         return Response.status(Response.Status.BAD_REQUEST).entity(new Result(violations)).build();
+         return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(violations)).build();
       }
 
       Mensagem mensagem = service.updateCadastro(matricula, alunoDTO);

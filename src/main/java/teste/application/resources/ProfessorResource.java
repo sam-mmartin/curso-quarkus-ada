@@ -1,9 +1,9 @@
 package teste.application.resources;
 
 import java.util.Objects;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.validation.Validator;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -32,6 +32,9 @@ public class ProfessorResource {
 
    @Inject
    ProfessorService service;
+
+   @Inject
+   Validator validator;
 
    @GET
    public Response listarTodosProfessores() throws Exception {
@@ -65,7 +68,9 @@ public class ProfessorResource {
 
    @POST
    public Response contratarProfessor(ProfessorRequestDTO professorDTO) throws Exception {
-      return Response.status(Response.Status.CREATED).entity(service.create(professorDTO)).build();
+      Mensagem mensagem = service.create(professorDTO);
+
+      return Response.status(Response.Status.CREATED).entity(mensagem).build();
    }
 
    @PUT

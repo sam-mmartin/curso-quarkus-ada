@@ -2,22 +2,30 @@ package teste.application.services;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
 
 import teste.application.dto.Mensagem;
 import teste.application.dto.curso.CursoRequestDTO;
 import teste.application.dto.disciplina.DisciplinaRequestDTO;
 import teste.application.dto.professor.ProfessorRequestDTO;
 import teste.application.dto.professor.ProfessorResponseDTO;
+import teste.application.exceptions.CustomConstraintException;
+import teste.application.exceptions.ErrorResponse;
 import teste.application.interfaces.mapper.ProfessorMapper;
 import teste.application.interfaces.services.ServiceGenerics;
 import teste.application.interfaces.services.ServiceCadastroMatricula;
 import teste.domain.curso.Curso;
 import teste.domain.disciplina.Disciplina;
 import teste.domain.professor.Professor;
+import teste.infrastructure.MatriculaResource;
 import teste.infrastructure.curso.CursoRepositoryJDBC;
 import teste.infrastructure.disciplina.DisciplinaRepositoryJDBC;
 import teste.infrastructure.professor.ProfessorRepositoryJDBC;
@@ -38,6 +46,12 @@ public class ProfessorService implements ServiceGenerics<ProfessorResponseDTO, P
    @Inject
    ProfessorMapper professorMapper;
 
+   @Inject
+   MatriculaResource mr;
+
+   @Inject
+   Validator validator;
+
    @Override
    public ProfessorResponseDTO getById(int id) throws Exception {
       return professorMapper.toResource(repositorio.buscarPorId(id));
@@ -50,22 +64,37 @@ public class ProfessorService implements ServiceGenerics<ProfessorResponseDTO, P
 
    @Override
    @Transactional(rollbackOn = Exception.class)
+   @Valid
    public Mensagem create(ProfessorRequestDTO professorDTO) throws Exception {
-      Professor novo = professorMapper.toEntity(professorDTO);
+      try {
+         Professor novo = professorMapper.toEntity(professorDTO);
+         novo.setEstado(true);
+         novo.setMatricula(mr.gerarMatricula());
 
-      repositorio.contratar(novo);
-      Mensagem mensagem = new Mensagem(
-            "Realizado contrato do professor: " + novo.getNome()
-                  + ". Nº de matricula: " + novo.getMatricula().getNumero());
-      return mensagem;
+         repositorio.contratar(novo);
+         Mensagem mensagem = new Mensagem(
+               "Realizado contrato do professor: " + novo.getNome()
+                     + ". Nº de matricula: " + novo.getMatricula().getNumero());
+
+         return mensagem;
+      } catch (ConstraintViolationException e) {
+         throw new CustomConstraintException(new ErrorResponse(e.getConstraintViolations()).getMessage());
+      }
    }
 
    @Override
    @Transactional(rollbackOn = Exception.class)
+   @Valid
    public Mensagem updateCadastro(String matricula, ProfessorRequestDTO professorDTO) throws Exception {
       Professor professor = repositorio.buscarPorMatricula(matricula);
       professor.setNome(professorDTO.getNome());
       professor.setCpf(professorDTO.getCpf());
+
+      Set<ConstraintViolation<Professor>> violations = validator.validate(professor);
+
+      if (!violations.isEmpty()) {
+         throw new CustomConstraintException(new ErrorResponse(violations).getMessage());
+      }
 
       repositorio.atualizarCadastroDoProfessor(professor);
       Mensagem mensagem = new Mensagem("Cadastro atualizado com sucesso.");
