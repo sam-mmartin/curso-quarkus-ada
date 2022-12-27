@@ -20,6 +20,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import teste.application.dto.Mensagem;
 import teste.application.dto.curso.GradeCurricularResponseDTO;
+import teste.application.dto.curso.CursoAlunosResponseDTO;
 import teste.application.dto.curso.CursoProfessoresResponseDTO;
 import teste.application.dto.curso.CursoRequestDTO;
 import teste.application.dto.curso.CursoResponseDTO;
@@ -101,6 +102,22 @@ public class CursoResource {
 
       return Response.ok(listagem).build();
    }
+
+   @GET
+   @Path("/listar-alunos/{id}")
+   public Response listarAlunosDoCurso(@PathParam("id") long id) throws Exception {
+      CursoAlunosResponseDTO lista = service.getCursoAndAlunos(id);
+
+      return Response.ok(lista).build();
+   }
+
+   @GET
+   @Path("/cursos-alunos/")
+   public Response listarTodosCursosEAlunos() throws Exception {
+      List<CursoAlunosResponseDTO> listagem = service.getAllCursosAndAlunos();
+
+      return Response.ok(listagem).build();
+   }
    // #endregion
 
    @POST
@@ -145,19 +162,5 @@ public class CursoResource {
       service.delete(id);
       return Response.status(Response.Status.NO_CONTENT).build();
    }
-
-   // @DELETE
-   // @Path("/remover-disciplina/{id_curso}-{id_disciplina}")
-   // public Response removerDisciplinadoDoCurso(@PathParam("id_curso") long
-   // idCurso,
-   // @PathParam("id_disciplina") long idDisciplina) throws Exception {
-   // Mensagem mensagem = service.removeDisciplinaFromCurso(idCurso, idDisciplina);
-
-   // if (Objects.isNull(mensagem)) {
-   // return Response.status(Response.Status.NOT_FOUND).build();
-   // }
-
-   // return Response.status(Response.Status.NO_CONTENT).entity(mensagem).build();
-   // }
 
 }

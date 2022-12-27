@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 
 import teste.application.dto.Mensagem;
 import teste.application.dto.curso.GradeCurricularResponseDTO;
+import teste.application.dto.curso.CursoAlunosResponseDTO;
 import teste.application.dto.curso.CursoProfessoresResponseDTO;
 import teste.application.dto.curso.CursoRequestDTO;
 import teste.application.dto.curso.CursoResponseDTO;
@@ -114,6 +115,22 @@ public class CursoService implements ServiceGenerics<CursoResponseDTO, CursoRequ
       return cursoMapper.listToResourceWithProfessores(cursos);
    }
 
+   public CursoAlunosResponseDTO getCursoAndAlunos(long id) throws Exception {
+      Curso curso = repositorio.findById(id);
+
+      if (Objects.isNull(curso)) {
+         throw new NotFoundException("Curso não encontrado!");
+      }
+
+      return cursoMapper.toResourceWithAlunos(curso);
+   }
+
+   public List<CursoAlunosResponseDTO> getAllCursosAndAlunos() throws Exception {
+      List<Curso> cursos = repositorio.listAll();
+
+      return cursoMapper.listToResourceWithAlunos(cursos);
+   }
+
    // #endregion
 
    @Override
@@ -213,38 +230,5 @@ public class CursoService implements ServiceGenerics<CursoResponseDTO, CursoRequ
                   + curso.getNomeDoCurso());
       return mensagem;
    }
-
-   // @Transactional(rollbackOn = Exception.class)
-   // public Mensagem removeDisciplinaFromCurso(long id, long idDisciplina) throws
-   // Exception {
-   // Curso curso = repositorio.findById(id);
-
-   // if (Objects.isNull(curso)) {
-   // return null;
-   // }
-
-   // LocalDateTime dateTime = LocalDateTime.now();
-   // List<Disciplina> disciplinas = curso.getDisciplinasDoCurso();
-   // Optional<Disciplina> optionalDisciplina = disciplinas.stream().filter(d ->
-   // d.getId() == idDisciplina).findFirst();
-   // optionalDisciplina.orElseThrow(
-   // () -> new CustomConstraintException("Disciplina não encontrada no quadro de
-   // disciplinas do curso."));
-   // Disciplina disciplina = optionalDisciplina.get();
-   // disciplinas.remove(disciplina);
-
-   // curso.setDisciplinasDoCurso(disciplinas);
-   // curso.setObservacao("Disciplina: "
-   // + disciplina.getNomeDaDisciplina()
-   // + " removida do quadro de disciplinas do curso");
-   // curso.setDataAtualizacao(dateTime);
-
-   // repositorio.persistAndFlush(curso);
-
-   // Mensagem mensagem = new Mensagem("Disciplina: "
-   // + disciplina.getNomeDaDisciplina()
-   // + " removida do quadro de disciplinas do curso");
-   // return mensagem;
-   // }
 
 }
