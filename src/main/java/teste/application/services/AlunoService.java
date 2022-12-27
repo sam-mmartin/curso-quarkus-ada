@@ -12,6 +12,8 @@ import teste.application.dto.Mensagem;
 import teste.application.dto.aluno.AlunoCursoRequestDTO;
 import teste.application.dto.aluno.AlunoRequestDTO;
 import teste.application.dto.aluno.AlunoResponseDTO;
+import teste.application.dto.aluno.AlunosByCursoResponseDTO;
+import teste.application.exceptions.CustomConstraintException;
 import teste.application.exceptions.ErrorResponse;
 import teste.application.interfaces.mapper.AlunoMapper;
 import teste.application.interfaces.services.ServiceAluno;
@@ -49,6 +51,24 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
    @Override
    public List<AlunoResponseDTO> getAll() throws Exception {
       return alunoMapper.listToResource(repositorio.listarTodos());
+   }
+
+   @Override
+   public AlunoResponseDTO getByMatricula(String matricula) throws Exception {
+      Aluno aluno = repositorio.buscarPorMatricula(matricula);
+
+      if (Objects.isNull(aluno)) {
+         return null;
+      }
+
+      return alunoMapper.toResource(aluno);
+   }
+
+   @Override
+   public List<AlunosByCursoResponseDTO> getAlunosByCurso(int id) throws Exception {
+      List<Aluno> alunosFromCurso = repositorio.listarAlunosPorCurso(id);
+
+      return alunoMapper.listToResourceByCurso(alunosFromCurso);
    }
 
    @Override
@@ -98,17 +118,6 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
    }
 
    @Override
-   public AlunoResponseDTO getByMatricula(String matricula) throws Exception {
-      Aluno aluno = repositorio.buscarPorMatricula(matricula);
-
-      if (Objects.isNull(aluno)) {
-         return null;
-      }
-
-      return alunoMapper.toResource(aluno);
-   }
-
-   @Override
    @Transactional(rollbackOn = Exception.class)
    public Mensagem rematricularAluno(String matricula) throws Exception {
       Aluno aluno = repositorio.buscarPorMatricula(matricula);
@@ -116,8 +125,12 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
 
       if (Objects.isNull(aluno)) {
          mensagem.setTexto("Matrícula não encontrada!");
+      }
+
+      if (aluno.isEstado()) {
+         throw new CustomConstraintException("Aluno já está matriculado!");
       } else {
-         repositorio.rematricular(aluno.getId());
+         repositorio.rematricular(aluno);
          mensagem.setTexto("Rematrícula realizada com sucesso.");
       }
 
@@ -132,9 +145,13 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
 
       if (Objects.isNull(aluno)) {
          mensagem.setTexto("Matrícula não encontrada!");
-      } else {
-         repositorio.cancelarMatricula(aluno.getId());
+      }
+
+      if (aluno.isEstado()) {
+         repositorio.cancelarMatricula(aluno);
          mensagem.setTexto("Matrícula: " + aluno.getMatricula().getNumero() + " cancelada!");
+      } else {
+         throw new CustomConstraintException("Aluno: " + aluno.getNome() + " não está matriculado!");
       }
 
       return mensagem;

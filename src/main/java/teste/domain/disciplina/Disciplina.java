@@ -1,22 +1,20 @@
 package teste.domain.disciplina;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
-import teste.domain.curso.Curso;
-import teste.domain.professor.Professor;
+import teste.domain.mappeamento.CursoDisciplina;
+import teste.domain.mappeamento.ProfessorDisciplina;
 
 @Entity
 @Table(name = "DISCIPLINA")
@@ -29,13 +27,17 @@ public class Disciplina {
    private long id;
    private String nomeDaDisciplina;
 
-   @ManyToMany(mappedBy = "disciplinasDoCurso", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-   private List<Curso> cursos;
+   @OneToMany(mappedBy = "disciplina")
+   private List<CursoDisciplina> cursos;
 
-   @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-   @JoinTable(name = "DISCIPLINA_PROFESSOR", joinColumns = {
-         @JoinColumn(name = "disciplina_id") }, inverseJoinColumns = { @JoinColumn(name = "professor_id") })
-   private List<Professor> professores;
+   @OneToMany(mappedBy = "disciplina")
+   private List<ProfessorDisciplina> professores;
+
+   @Column(name = "data_criacao")
+   private LocalDateTime dataCriacao;
+
+   @Column(name = "data_atualizacao")
+   private LocalDateTime dataAtualizacao;
 
    public Disciplina() {
    }

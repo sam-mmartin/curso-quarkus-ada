@@ -1,5 +1,6 @@
 package teste.infrastructure.aluno;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
@@ -63,11 +64,29 @@ public class AlunoRepositoryJDBC implements RepositoryAluno {
    }
 
    @Override
+   public List<Aluno> listarAlunosPorCurso(int idCurso) throws Exception {
+      String nameQuery = "CONSULTAR_ALUNOS_POR_CURSO";
+      TypedQuery<Aluno> query = em.createNamedQuery(nameQuery, Aluno.class)
+            .setParameter("curso_id", idCurso);
+
+      try {
+         return query.getResultList();
+      } catch (NoResultException e) {
+         return new ArrayList<>();
+      } catch (PersistenceException e) {
+         throw new Exception(e);
+      }
+   }
+
+   @Override
    @Transactional
    public void matricular(Aluno aluno) throws Exception {
       try {
+         LocalDateTime datetime = LocalDateTime.now();
          aluno.setEstado(true);
          aluno.setMatricula(mr.gerarMatricula());
+         aluno.setDataCriacao(datetime);
+         aluno.setDataAtualizacao(datetime);
 
          em.persist(aluno);
       } catch (PersistenceException e) {
@@ -76,8 +95,7 @@ public class AlunoRepositoryJDBC implements RepositoryAluno {
    }
 
    @Override
-   public void rematricular(int id) throws Exception {
-      Aluno aluno = em.find(Aluno.class, id);
+   public void rematricular(Aluno aluno) throws Exception {
       aluno.setEstado(true);
       update(aluno);
    }
@@ -88,14 +106,16 @@ public class AlunoRepositoryJDBC implements RepositoryAluno {
    }
 
    @Override
-   public void cancelarMatricula(int id) throws Exception {
-      Aluno aluno = em.find(Aluno.class, id);
+   public void cancelarMatricula(Aluno aluno) throws Exception {
       aluno.setEstado(false);
       update(aluno);
    }
 
    private void update(Aluno aluno) throws Exception {
       try {
+         LocalDateTime datetime = LocalDateTime.now();
+         aluno.setDataAtualizacao(datetime);
+
          em.merge(aluno);
       } catch (PersistenceException e) {
          throw new Exception(e);

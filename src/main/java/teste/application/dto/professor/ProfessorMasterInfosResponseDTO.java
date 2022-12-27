@@ -1,22 +1,22 @@
-package teste.application.dto.aluno;
+package teste.application.dto.professor;
+
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import teste.application.dto.mapeamento.NameResponseDTO;
 
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode
-public class AlunoResponseDTO {
+public class ProfessorMasterInfosResponseDTO {
 
-   private int id;
    private String nome;
-   private String cpf;
    private String matricula;
    private String estado;
-   private String dataCriacao;
-   private String dataAtualizacao;
-
+   private List<NameResponseDTO> cursos;
+   private List<NameResponseDTO> disciplinas;
 }

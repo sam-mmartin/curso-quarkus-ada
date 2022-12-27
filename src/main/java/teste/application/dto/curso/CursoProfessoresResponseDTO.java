@@ -5,14 +5,14 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import teste.application.dto.disciplina.DisciplinaResponseDTO;
+import teste.application.dto.professor.ProfessorBasicInfoResponseDTO;
 
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class CursoDisciplinaResponseDTO {
+public class CursoProfessoresResponseDTO {
 
    private int id;
    private String nomeDoCurso;
-   private List<DisciplinaResponseDTO> disciplinasDoCurso;
+   private List<ProfessorBasicInfoResponseDTO> professoresDoCurso;
 }

@@ -10,11 +10,13 @@ public interface RepositoryAluno {
 
    public Aluno buscarPorId(int id) throws Exception;
 
+   public List<Aluno> listarAlunosPorCurso(int idCurso) throws Exception;
+
    public void matricular(Aluno aluno) throws Exception;
 
-   public void rematricular(int id) throws Exception;
+   public void rematricular(Aluno aluno) throws Exception;
 
    public void atualizarCadastroDoAluno(Aluno aluno) throws Exception;
 
-   public void cancelarMatricula(int id) throws Exception;
+   public void cancelarMatricula(Aluno aluno) throws Exception;
 }

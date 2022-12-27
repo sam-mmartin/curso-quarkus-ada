@@ -1,30 +1,38 @@
 package teste.application.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import teste.application.dto.Mensagem;
-import teste.application.dto.curso.CursoDisciplinaResponseDTO;
+import teste.application.dto.curso.GradeCurricularResponseDTO;
+import teste.application.dto.curso.CursoProfessoresResponseDTO;
 import teste.application.dto.curso.CursoRequestDTO;
 import teste.application.dto.curso.CursoResponseDTO;
 import teste.application.dto.disciplina.DisciplinaRequestDTO;
-import teste.application.interfaces.mapper.CursoDisciplinaMapper;
+import teste.application.exceptions.NotFoundException;
 import teste.application.interfaces.mapper.CursoMapper;
 import teste.application.interfaces.services.ServiceGenerics;
 import teste.application.interfaces.services.ServiceGenerics2;
 import teste.domain.curso.Curso;
 import teste.domain.disciplina.Disciplina;
+import teste.domain.mappeamento.CursoDisciplina;
+import teste.domain.mappeamento.CursoProfessor;
+import teste.domain.professor.Professor;
 import teste.infrastructure.curso.CursoRepositoryJDBC;
 import teste.infrastructure.disciplina.DisciplinaRepositoryJDBC;
+import teste.infrastructure.mapeamento.CursoDisciplinaRepository;
+import teste.infrastructure.mapeamento.CursoProfessorRepository;
+import teste.infrastructure.professor.ProfessorRepositoryJDBC;
 
 @RequestScoped
 public class CursoService implements ServiceGenerics<CursoResponseDTO, CursoRequestDTO>,
       ServiceGenerics2<CursoResponseDTO, CursoRequestDTO> {
 
+   // #region Injects
    @Inject
    CursoRepositoryJDBC repositorio;
 
@@ -32,10 +40,20 @@ public class CursoService implements ServiceGenerics<CursoResponseDTO, CursoRequ
    DisciplinaRepositoryJDBC disciplinaRepository;
 
    @Inject
-   CursoMapper cursoMapper;
+   CursoDisciplinaRepository repositorioCD;
 
    @Inject
-   CursoDisciplinaMapper cursoDisciplinaMapper;
+   CursoProfessorRepository repositorioCP;
+
+   @Inject
+   ProfessorRepositoryJDBC repositorioProfessor;
+
+   @Inject
+   CursoMapper cursoMapper;
+
+   // #endregion
+
+   // #region GETs
 
    @Override
    public CursoResponseDTO getById(int id) throws Exception {
@@ -54,31 +72,6 @@ public class CursoService implements ServiceGenerics<CursoResponseDTO, CursoRequ
    }
 
    @Override
-   @Transactional(rollbackOn = Exception.class)
-   public Mensagem create(CursoRequestDTO cursoDTO) throws Exception {
-      Curso novo = cursoDTO.criarCurso();
-
-      repositorio.persist(novo);
-      Mensagem mensagem = new Mensagem("Curso: " + cursoDTO.getNomeDoCurso() + " implantado com sucesso.");
-      return mensagem;
-   }
-
-   @Override
-   @Transactional(rollbackOn = Exception.class)
-   public Mensagem update(int id, CursoRequestDTO cursoDTO) throws Exception {
-      repositorio.update("nomeDoCurso = ?1 where id = ?2", cursoDTO.getNomeDoCurso(), (long) id);
-
-      Mensagem mensagem = new Mensagem("Cadastro realizado com sucesso");
-      return mensagem;
-   }
-
-   @Override
-   @Transactional(rollbackOn = Exception.class)
-   public void delete(int id) throws Exception {
-      repositorio.deleteById((long) id);
-   }
-
-   @Override
    public CursoResponseDTO getByName(String name) throws Exception {
       Curso curso = repositorio.buscarPorNomeDoCurso(name);
 
@@ -89,37 +82,169 @@ public class CursoService implements ServiceGenerics<CursoResponseDTO, CursoRequ
       return cursoMapper.toResource(curso);
    }
 
-   @Transactional(rollbackOn = Exception.class)
-   public Mensagem addDisciplinaToCurso(int id, DisciplinaRequestDTO disciplinaDTO) throws Exception {
+   public GradeCurricularResponseDTO getCursoAndDisciplinas(int id) throws Exception {
       Curso curso = repositorio.findById((long) id);
 
       if (Objects.isNull(curso)) {
          return null;
       }
 
-      Disciplina disciplina = disciplinaRepository.buscarPorDisciplina(disciplinaDTO.getNomeDaDisciplina());
-      List<Disciplina> disciplinas = curso.getDisciplinasDoCurso();
-      disciplinas.add(disciplina);
-      repositorio.persist(curso);
+      return cursoMapper.toResourceWithDisciplinas(curso);
+   }
 
-      Mensagem mensagem = new Mensagem(
-            "Disciplina: " + disciplina.getNomeDaDisciplina() + " adicionada ao curso: " + curso.getNomeDoCurso());
+   public List<GradeCurricularResponseDTO> getAllCursosAndDisciplinas() throws Exception {
+      List<Curso> cursos = repositorio.listAll();
+
+      return cursoMapper.listToResourceWithDisciplinas(cursos);
+   }
+
+   public CursoProfessoresResponseDTO getCursoAndProfessores(int id) throws Exception {
+      Curso curso = repositorio.findById((long) id);
+
+      if (Objects.isNull(curso)) {
+         throw new NotFoundException("Curso não encontrado!");
+      }
+
+      return cursoMapper.toResourceWithProfessores(curso);
+   }
+
+   public List<CursoProfessoresResponseDTO> getAllCursosAndProfessores() throws Exception {
+      List<Curso> cursos = repositorio.listAll();
+
+      return cursoMapper.listToResourceWithProfessores(cursos);
+   }
+
+   // #endregion
+
+   @Override
+   @Transactional(rollbackOn = Exception.class)
+   public Mensagem create(CursoRequestDTO cursoDTO) throws Exception {
+      LocalDateTime dateTime = LocalDateTime.now();
+
+      Curso novo = cursoDTO.criarCurso();
+      novo.setObservacao("Curso implantado");
+      novo.setDataCriacao(dateTime);
+      novo.setDataAtualizacao(dateTime);
+
+      repositorio.persist(novo);
+      Mensagem mensagem = new Mensagem("Curso: " + cursoDTO.getNomeDoCurso() + " implantado com sucesso.");
       return mensagem;
    }
 
-   public CursoDisciplinaResponseDTO getCursoAndDisciplinas(int id) throws Exception {
+   @Override
+   @Transactional(rollbackOn = Exception.class)
+   public Mensagem update(int id, CursoRequestDTO cursoDTO) throws Exception {
+      LocalDateTime dateTime = LocalDateTime.now();
+      repositorio.update("nomeDoCurso = ?1, data_atualizacao = ?2 where id = ?3",
+            cursoDTO.getNomeDoCurso(),
+            dateTime,
+            (long) id);
+
+      Mensagem mensagem = new Mensagem("Atualização do cadastro realizado com sucesso");
+      return mensagem;
+   }
+
+   @Override
+   @Transactional(rollbackOn = Exception.class)
+   public void delete(int id) throws Exception {
+      repositorio.deleteById((long) id);
+   }
+
+   @Transactional(rollbackOn = Exception.class)
+   public Mensagem addProfessorToCurso(int id, String matricula) throws Exception {
+      LocalDateTime dateTime = LocalDateTime.now();
+      Curso curso = repositorio.findById((long) id);
+      Professor professor = repositorioProfessor.buscarPorMatricula(matricula);
+
+      if (Objects.isNull(curso)) {
+         throw new NotFoundException("Curso não encontrado!");
+      }
+
+      if (Objects.isNull(professor)) {
+         throw new NotFoundException("Professor não encontrado!");
+      }
+
+      CursoProfessor novo = new CursoProfessor(curso, professor, dateTime, dateTime);
+      repositorioCP.create(novo);
+
+      curso.setObservacao("Professor: "
+            + professor.getNome()
+            + ", matricula: "
+            + professor.getMatricula().getNumero()
+            + ", adicionado ao quadro de professores.");
+      curso.setDataAtualizacao(dateTime);
+      repositorio.persistAndFlush(curso);
+
+      Mensagem mensagem = new Mensagem("Professor: "
+            + professor.getNome()
+            + " Matricula: "
+            + professor.getMatricula().getNumero()
+            + ". Adicionado ao quadro de professores do Curso: "
+            + curso.getNomeDoCurso());
+      return mensagem;
+   }
+
+   @Transactional(rollbackOn = Exception.class)
+   public Mensagem addDisciplinaToCurso(int id, DisciplinaRequestDTO disciplinaDTO) throws Exception {
+      LocalDateTime dateTime = LocalDateTime.now();
       Curso curso = repositorio.findById((long) id);
 
       if (Objects.isNull(curso)) {
-         return null;
+         throw new NotFoundException("Curso não encontrado!");
       }
 
-      return cursoDisciplinaMapper.toResource(curso);
+      Disciplina disciplina = disciplinaRepository.buscarPorDisciplina(disciplinaDTO.getNomeDaDisciplina());
+
+      if (Objects.isNull(disciplina)) {
+         throw new NotFoundException("Curso não encontrado!");
+      }
+
+      CursoDisciplina novo = new CursoDisciplina(curso, disciplina, dateTime, dateTime);
+      repositorioCD.persist(novo);
+
+      curso.setObservacao("Disciplina: "
+            + disciplina.getNomeDaDisciplina()
+            + " adicionada ao quadro de disciplinas do curso");
+      curso.setDataAtualizacao(dateTime);
+      repositorio.persist(curso);
+
+      Mensagem mensagem = new Mensagem(
+            "Disciplina: " + disciplina.getNomeDaDisciplina() + " adicionada ao curso: "
+                  + curso.getNomeDoCurso());
+      return mensagem;
    }
 
-   public List<CursoDisciplinaResponseDTO> getAllCursosAndDisciplinas() throws Exception {
-      List<Curso> cursos = repositorio.listAll();
+   // @Transactional(rollbackOn = Exception.class)
+   // public Mensagem removeDisciplinaFromCurso(long id, long idDisciplina) throws
+   // Exception {
+   // Curso curso = repositorio.findById(id);
 
-      return cursoDisciplinaMapper.listToResource(cursos);
-   }
+   // if (Objects.isNull(curso)) {
+   // return null;
+   // }
+
+   // LocalDateTime dateTime = LocalDateTime.now();
+   // List<Disciplina> disciplinas = curso.getDisciplinasDoCurso();
+   // Optional<Disciplina> optionalDisciplina = disciplinas.stream().filter(d ->
+   // d.getId() == idDisciplina).findFirst();
+   // optionalDisciplina.orElseThrow(
+   // () -> new CustomConstraintException("Disciplina não encontrada no quadro de
+   // disciplinas do curso."));
+   // Disciplina disciplina = optionalDisciplina.get();
+   // disciplinas.remove(disciplina);
+
+   // curso.setDisciplinasDoCurso(disciplinas);
+   // curso.setObservacao("Disciplina: "
+   // + disciplina.getNomeDaDisciplina()
+   // + " removida do quadro de disciplinas do curso");
+   // curso.setDataAtualizacao(dateTime);
+
+   // repositorio.persistAndFlush(curso);
+
+   // Mensagem mensagem = new Mensagem("Disciplina: "
+   // + disciplina.getNomeDaDisciplina()
+   // + " removida do quadro de disciplinas do curso");
+   // return mensagem;
+   // }
+
 }

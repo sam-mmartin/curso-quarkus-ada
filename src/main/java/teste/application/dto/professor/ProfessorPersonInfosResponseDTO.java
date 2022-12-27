@@ -1,4 +1,4 @@
-package teste.application.dto.aluno;
+package teste.application.dto.professor;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode
-public class AlunoResponseDTO {
+public class ProfessorPersonInfosResponseDTO {
 
    private int id;
    private String nome;

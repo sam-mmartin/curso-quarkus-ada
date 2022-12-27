@@ -1,5 +1,6 @@
 package teste.infrastructure.professor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +13,6 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import teste.application.exceptions.CustomConstraintException;
-import teste.domain.curso.Curso;
-import teste.domain.disciplina.Disciplina;
 import teste.domain.professor.Professor;
 import teste.domain.professor.RepositoryProfessor;
 
@@ -68,19 +67,12 @@ public class ProfessorRepositoryJDBC implements RepositoryProfessor {
    }
 
    @Override
-   public void atualizarCadastroDoProfessor(Professor professor) throws Exception {
-      update(professor);
-   }
-
-   @Override
    @Transactional
-   public void demitir(Professor professor) throws Exception {
-      em.remove(professor);
-   }
-
-   @Transactional
-   public void update(Professor professor) throws Exception {
+   public void atualizarProfessor(Professor professor) throws Exception {
       try {
+         LocalDateTime dateTime = LocalDateTime.now();
+         professor.setDataAtualizacao(dateTime);
+
          em.merge(professor);
       } catch (PersistenceException e) {
          throw new CustomConstraintException(e.getMessage());
@@ -88,45 +80,9 @@ public class ProfessorRepositoryJDBC implements RepositoryProfessor {
    }
 
    @Override
-   public void lecionarDisciplina(int id, Disciplina disciplina) throws Exception {
-      Professor professor = em.find(Professor.class, id);
-      List<Disciplina> disciplinas = professor.getDisciplinasLecionadas();
-      disciplinas.add(disciplina);
-      setDisciplinas(professor, disciplinas);
-   }
-
-   @Override
-   public void pararDeLecionarDisciplina(int id, Disciplina disciplina) throws Exception {
-      Professor professor = em.find(Professor.class, id);
-      List<Disciplina> disciplinas = professor.getDisciplinasLecionadas();
-      disciplinas.remove(disciplina);
-      setDisciplinas(professor, disciplinas);
-   }
-
-   @Override
-   public void adicionarCurso(int id, Curso curso) throws Exception {
-      Professor professor = em.find(Professor.class, id);
-      List<Curso> cursos = professor.getCursosLecionados();
-      cursos.add(curso);
-      setCursos(professor, cursos);
-   }
-
-   @Override
-   public void removerCurso(int id, Curso curso) throws Exception {
-      Professor professor = em.find(Professor.class, id);
-      List<Curso> cursos = professor.getCursosLecionados();
-      cursos.remove(curso);
-      setCursos(professor, cursos);
-   }
-
-   private void setDisciplinas(Professor professor, List<Disciplina> disciplinas) throws Exception {
-      professor.setDisciplinasLecionadas(disciplinas);
-      update(professor);
-   }
-
-   private void setCursos(Professor professor, List<Curso> cursos) throws Exception {
-      professor.setCursosLecionados(cursos);
-      update(professor);
+   @Transactional
+   public void demitir(Professor professor) throws Exception {
+      em.remove(professor);
    }
 
 }

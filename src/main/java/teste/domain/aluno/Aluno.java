@@ -1,5 +1,8 @@
 package teste.domain.aluno;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,7 +30,8 @@ import teste.domain.curso.Curso;
 @Table(name = "ALUNO")
 @NamedNativeQueries({
       @NamedNativeQuery(name = "CONSULTAR_ALUNOS", query = "SELECT * FROM ALUNO", resultClass = Aluno.class),
-      @NamedNativeQuery(name = "CONSULTAR_ALUNO_POR_MATRICULA", query = "SELECT * FROM ALUNO WHERE matricula = :matricula", resultClass = Aluno.class)
+      @NamedNativeQuery(name = "CONSULTAR_ALUNO_POR_MATRICULA", query = "SELECT * FROM ALUNO WHERE matricula = :matricula", resultClass = Aluno.class),
+      @NamedNativeQuery(name = "CONSULTAR_ALUNOS_POR_CURSO", query = "SELECT * FROM ALUNO WHERE curso_id = :curso_id", resultClass = Aluno.class)
 })
 @Getter
 @Setter
@@ -54,6 +58,12 @@ public class Aluno {
    @ManyToOne(fetch = FetchType.EAGER)
    @JoinColumn(name = "curso_id", referencedColumnName = "id")
    private Curso cursoMatriculado;
+
+   @Column(name = "data_criacao")
+   private LocalDateTime dataCriacao;
+
+   @Column(name = "data_atualizacao")
+   private LocalDateTime dataAtualizacao;
 
    public Aluno() {
    }

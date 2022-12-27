@@ -11,4 +11,6 @@ public class DisciplinaResponseDTO {
 
    private int id;
    private String nomeDaDisciplina;
+   private String dataCriacao;
+   private String dataAtualizacao;
 }

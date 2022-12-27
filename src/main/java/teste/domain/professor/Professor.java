@@ -1,17 +1,17 @@
 package teste.domain.professor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -23,8 +23,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import teste.domain.VOs.matricula.Matricula;
 import teste.domain.VOs.matricula.MatriculaAttributeConverter;
-import teste.domain.curso.Curso;
-import teste.domain.disciplina.Disciplina;
+import teste.domain.mappeamento.CursoProfessor;
+import teste.domain.mappeamento.ProfessorDisciplina;
 
 @Entity
 @Table(name = "PROFESSOR")
@@ -54,14 +54,34 @@ public class Professor {
 
    private boolean estado;
 
-   @ManyToMany(mappedBy = "professoresLotados", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-   private List<Curso> cursosLecionados;
+   @OneToMany(mappedBy = "professor")
+   private List<CursoProfessor> cursosLecionados;
 
-   @ManyToMany(mappedBy = "professores", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-   private List<Disciplina> disciplinasLecionadas;
+   @OneToMany(mappedBy = "professor")
+   private List<ProfessorDisciplina> disciplinasLecionadas;
+
+   @Column(name = "data_criacao")
+   private LocalDateTime dataCriacao;
+
+   @Column(name = "data_atualizacao")
+   private LocalDateTime dataAtualizacao;
+
+   private String observacao;
 
    public Professor(String nome, String cpf) {
       this.nome = nome;
       this.cpf = cpf;
    }
+
+   public Professor(String nome, String cpf, Matricula matricula, boolean estado, LocalDateTime dataCriacao,
+         LocalDateTime dataAtualizacao, String observacao) {
+      this.nome = nome;
+      this.cpf = cpf;
+      this.matricula = matricula;
+      this.estado = estado;
+      this.dataCriacao = dataCriacao;
+      this.dataAtualizacao = dataAtualizacao;
+      this.observacao = observacao;
+   }
+
 }

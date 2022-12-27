@@ -19,8 +19,9 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import teste.application.dto.Mensagem;
 import teste.application.dto.curso.CursoRequestDTO;
 import teste.application.dto.disciplina.DisciplinaRequestDTO;
+import teste.application.dto.professor.ProfessorMasterInfosResponseDTO;
 import teste.application.dto.professor.ProfessorRequestDTO;
-import teste.application.dto.professor.ProfessorResponseDTO;
+import teste.application.dto.professor.ProfessorPersonInfosResponseDTO;
 import teste.application.services.ProfessorService;
 
 @RequestScoped
@@ -45,7 +46,7 @@ public class ProfessorResource {
    @Path("/{id}")
    public Response buscarProfessorPorId(@PathParam("id") int id) throws Exception {
 
-      ProfessorResponseDTO professorDTO = service.getById(id);
+      ProfessorPersonInfosResponseDTO professorDTO = service.getById(id);
 
       if (Objects.isNull(professorDTO)) {
          return Response.status(Response.Status.NOT_FOUND).build();
@@ -57,7 +58,7 @@ public class ProfessorResource {
    @GET
    @Path("/matricula/{matricula}")
    public Response buscarProfessorPorMatricula(@PathParam("matricula") String matricula) throws Exception {
-      ProfessorResponseDTO professorDTO = service.getByMatricula(matricula);
+      ProfessorMasterInfosResponseDTO professorDTO = service.getByMatricula(matricula);
 
       if (Objects.isNull(professorDTO)) {
          return Response.status(Response.Status.NOT_FOUND).build();

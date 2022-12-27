@@ -1,5 +1,6 @@
 package teste.application.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,11 +45,26 @@ public class DisciplinaService
    }
 
    @Override
+   public DisciplinaResponseDTO getByName(String nomeDaDisciplina) throws Exception {
+      Disciplina disciplina = repositorio.buscarPorDisciplina(nomeDaDisciplina);
+
+      if (Objects.isNull(disciplina)) {
+         return null;
+      }
+
+      return disciplinaMapper.toResource(disciplina);
+   }
+
+   @Override
    @Transactional(rollbackOn = Exception.class)
    public Mensagem create(DisciplinaRequestDTO disciplinaDTO) throws Exception {
+      LocalDateTime dateTime = LocalDateTime.now();
       Disciplina novo = disciplinaDTO.criarDisciplina();
 
+      novo.setDataCriacao(dateTime);
+      novo.setDataAtualizacao(dateTime);
       repositorio.persist(novo);
+
       Mensagem mensagem = new Mensagem(
             "Disciplina: " + disciplinaDTO.getNomeDaDisciplina() + " implantada com sucesso.");
       return mensagem;
@@ -57,7 +73,11 @@ public class DisciplinaService
    @Override
    @Transactional(rollbackOn = Exception.class)
    public Mensagem update(int id, DisciplinaRequestDTO disciplinaDTO) throws Exception {
-      repositorio.update("nomeDaDisciplina = ?1 where id = ?2", disciplinaDTO.getNomeDaDisciplina(), (long) id);
+      LocalDateTime dateTime = LocalDateTime.now();
+      repositorio.update("nomeDaDisciplina = ?1, data_atualizacao = ?2 where id = ?3",
+            disciplinaDTO.getNomeDaDisciplina(),
+            dateTime,
+            (long) id);
 
       Mensagem mensagem = new Mensagem("Cadastro atualizado com sucesso.");
       return mensagem;
@@ -69,14 +89,4 @@ public class DisciplinaService
       repositorio.deleteById((long) id);
    }
 
-   @Override
-   public DisciplinaResponseDTO getByName(String nomeDaDisciplina) throws Exception {
-      Disciplina disciplina = repositorio.buscarPorDisciplina(nomeDaDisciplina);
-
-      if (Objects.isNull(disciplina)) {
-         return null;
-      }
-
-      return disciplinaMapper.toResource(disciplina);
-   }
 }

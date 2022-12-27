@@ -18,6 +18,10 @@ public class SchoolExceptionHandler implements ExceptionMapper<Exception> {
          return Response.status(400).entity(new ErrorResponse(exception.getMessage(), false)).build();
       }
 
+      if (exception instanceof NotFoundException) {
+         return Response.status(404).entity(new ErrorResponse(exception.getMessage(), false)).build();
+      }
+
       return Response
             .status(Response.Status.INTERNAL_SERVER_ERROR)
             .entity(new ErrorResponse(exception.getMessage()))

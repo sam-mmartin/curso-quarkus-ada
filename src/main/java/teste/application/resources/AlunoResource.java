@@ -68,6 +68,12 @@ public class AlunoResource {
       return Response.ok(alunoDTO).build();
    }
 
+   @GET
+   @Path("/listar-por-curso/{id_curso}")
+   public Response listarTodosAlunosDeUmCurso(@PathParam("id_curso") int idCurso) throws Exception {
+      return Response.ok(service.getAlunosByCurso(idCurso)).build();
+   }
+
    @POST
    public Response matricularAluno(AlunoCursoRequestDTO alunoDTO) throws Exception {
       Set<ConstraintViolation<AlunoCursoRequestDTO>> violations = validator.validate(alunoDTO);
