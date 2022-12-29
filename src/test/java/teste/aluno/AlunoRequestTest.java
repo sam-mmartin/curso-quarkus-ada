@@ -1,16 +1,21 @@
 package teste.aluno;
 
+import java.util.stream.Stream;
+
 import javax.validation.Validation;
 import javax.validation.Validator;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import io.quarkus.test.junit.QuarkusTest;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
 import teste.application.dto.aluno.AlunoRequestDTO;
 import teste.application.exceptions.ErrorResponse;
 
-@QuarkusTest
 public class AlunoRequestTest {
 
    private static final String name = "Mallu Estácio";
@@ -42,20 +47,59 @@ public class AlunoRequestTest {
       factory.close();
    }
 
-   @Test
-   public void nameNotBlank() {
+   @ParameterizedTest
+   @MethodSource("invalidNameFields")
+   public void nameNotBlank(final String name, final String errorMessage) {
       final var factory = Validation.buildDefaultValidatorFactory();
       final var validator = factory.getValidator();
 
-      var request = new AlunoRequestDTO(" ", cpf);
+      var request = new AlunoRequestDTO(name, cpf);
 
       final var violations = validator.validate(request);
       ErrorResponse errors = new ErrorResponse(violations);
 
       Assertions.assertFalse(violations.isEmpty());
-      Assertions.assertEquals("É necessário informar o nome", errors.getMessage());
+      Assertions.assertEquals(errorMessage, errors.getMessage());
 
       factory.close();
+   }
+
+   @ParameterizedTest
+   @MethodSource("invalidCpfFields")
+   public void cpfNotBlank(final String cpf, final String errorMessage) {
+      final var factory = Validation.buildDefaultValidatorFactory();
+      final var validator = factory.getValidator();
+
+      var request = new AlunoRequestDTO(name, cpf);
+
+      final var violations = validator.validate(request);
+      ErrorResponse errors = new ErrorResponse(violations);
+
+      Assertions.assertFalse(violations.isEmpty());
+      Assertions.assertEquals(errorMessage, errors.getMessage());
+
+      factory.close();
+   }
+
+   @Test
+   public void equalsAndHashCode() {
+      var aluno1 = new AlunoRequestDTO(name, cpf);
+      var aluno2 = new AlunoRequestDTO(name, cpf);
+
+      Assertions.assertTrue(aluno1.equals(aluno2) && aluno2.equals(aluno1));
+      Assertions.assertTrue(aluno1.hashCode() == aluno2.hashCode());
+   }
+
+   static Stream<Arguments> invalidNameFields() {
+      return Stream.of(
+            arguments(null, "É necessário informar o nome"),
+            arguments("", "É necessário informar o nome"));
+   }
+
+   static Stream<Arguments> invalidCpfFields() {
+      return Stream.of(
+            arguments(null, "É necessário informar o CPF"),
+            arguments("", "É necessário informar o CPF"));
    }
 
    private void exectuteAssertions(final Validator validator, final AlunoRequestDTO request) {

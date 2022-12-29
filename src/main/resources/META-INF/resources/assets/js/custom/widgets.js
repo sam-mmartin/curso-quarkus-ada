@@ -82,7 +82,7 @@ var KTWidgets = (function () {
          !(function () {
             var t = document.querySelector("#kt_stats_widget_1_chart");
             var t1 = document.querySelector("#kt_stats_widget_2_chart");
-            if (t && t1) {
+            if (t) {
                var e = KTUtil.getCssVariableValue("--bs-gray-200"),
                   a = KTUtil.getCssVariableValue("--bs-gray-800"),
                   o = {
@@ -126,10 +126,8 @@ var KTWidgets = (function () {
                         plugins: { legend: { display: !1 } },
                      },
                   },
-                  s = t.getContext("2d"),
-                  s1 = t1.getContext("2d");
+                  s = t.getContext("2d");
                new Chart(s, o);
-               new Chart(s1, o);
             }
          })(),
             t(
