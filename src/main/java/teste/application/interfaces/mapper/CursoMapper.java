@@ -28,6 +28,7 @@ public interface CursoMapper {
 
    List<GradeCurricularResponseDTO> listToResourceWithDisciplinas(List<Curso> cursos);
 
+   @Mapping(target = "professoresDoCurso", source = "professoresLotados")
    CursoProfessoresResponseDTO toResourceWithProfessores(Curso curso);
 
    List<CursoProfessoresResponseDTO> listToResourceWithProfessores(List<Curso> cursos);

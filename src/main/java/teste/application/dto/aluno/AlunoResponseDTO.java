@@ -16,6 +16,7 @@ public class AlunoResponseDTO {
    private String cpf;
    private String matricula;
    private String estado;
+   private String curso;
    private String dataCriacao;
    private String dataAtualizacao;
 

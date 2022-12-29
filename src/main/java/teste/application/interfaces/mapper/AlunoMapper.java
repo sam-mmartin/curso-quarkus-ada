@@ -1,5 +1,7 @@
 package teste.application.interfaces.mapper;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.mapstruct.Mapper;
@@ -16,6 +18,9 @@ public interface AlunoMapper {
 
    @Mapping(target = "matricula", source = "matricula.numero")
    @Mapping(target = "estado", expression = "java(isStatus(aluno.isEstado()))")
+   @Mapping(target = "curso", source = "cursoMatriculado.nomeDoCurso")
+   @Mapping(target = "dataCriacao", expression = "java(dateTime(aluno.getDataCriacao()))")
+   @Mapping(target = "dataAtualizacao", expression = "java(dateTime(aluno.getDataAtualizacao()))")
    AlunoResponseDTO toResource(Aluno aluno);
 
    @Mapping(target = "matricula", source = "matricula.numero")
@@ -48,5 +53,9 @@ public interface AlunoMapper {
       } else {
          return "Inativo";
       }
+   }
+
+   default String dateTime(LocalDateTime date) {
+      return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
    }
 }
