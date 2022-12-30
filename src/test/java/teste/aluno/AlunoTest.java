@@ -55,12 +55,12 @@ public class AlunoTest {
 
    @Test
    public void testCancelarMatricula() {
-      given().when().put("/alunos/cancelar-matricula/2020-200").then().statusCode(200);
+      given().when().put("/alunos/cancelar-matricula/1010-200").then().statusCode(200);
    }
 
    @Test
    public void testRematriculaAluno() {
-      given().when().put("/alunos/rematricular/3030-300").then().statusCode(200);
+      given().when().put("/alunos/rematricular/1010-300").then().statusCode(200);
    }
 
    @Test

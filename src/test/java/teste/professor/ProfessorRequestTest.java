@@ -1,4 +1,4 @@
-package teste.aluno;
+package teste.professor;
 
 import java.util.stream.Stream;
 
@@ -13,22 +13,21 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-import teste.application.dto.aluno.AlunoRequestDTO;
+import teste.application.dto.professor.ProfessorRequestDTO;
 import teste.application.exceptions.ErrorResponse;
 
-public class AlunoRequestTest {
+public class ProfessorRequestTest {
 
-   private static final String name = "Mallu Estácio";
-   private static final String cpf = "830.173.730-10";
+   private static final String nome = "Sérgio Carlos Mário Ramos";
+   private static final String cpf = "326.760.931-34";
 
    @Test
    public void constructorAllArgs() {
       final var factory = Validation.buildDefaultValidatorFactory();
       final var validator = factory.getValidator();
 
-      var request = new AlunoRequestDTO(name, cpf);
-
-      exectuteAssertions(validator, request);
+      var request = new ProfessorRequestDTO(nome, cpf);
+      executeAssertions(validator, request);
 
       factory.close();
    }
@@ -38,22 +37,31 @@ public class AlunoRequestTest {
       final var factory = Validation.buildDefaultValidatorFactory();
       final var validator = factory.getValidator();
 
-      var request = new AlunoRequestDTO();
-      request.setNome(name);
+      var request = new ProfessorRequestDTO();
+      request.setNome(nome);
       request.setCpf(cpf);
 
-      exectuteAssertions(validator, request);
+      executeAssertions(validator, request);
 
       factory.close();
    }
 
+   @Test
+   public void equalsAndHashCode() {
+      var dto1 = new ProfessorRequestDTO(nome, cpf);
+      var dto2 = new ProfessorRequestDTO(nome, cpf);
+
+      Assertions.assertTrue(dto1.equals(dto2) && dto2.equals(dto1));
+      Assertions.assertTrue(dto1.hashCode() == dto2.hashCode());
+   }
+
    @ParameterizedTest
    @MethodSource("invalidFields")
-   public void nameNotBlank(final String name, final String cpf, final String errorMessage) {
+   public void notValidFields(final String nome, final String cpf, final String errorMessage) {
       final var factory = Validation.buildDefaultValidatorFactory();
       final var validator = factory.getValidator();
 
-      var request = new AlunoRequestDTO(name, cpf);
+      var request = new ProfessorRequestDTO(nome, cpf);
 
       final var violations = validator.validate(request);
       ErrorResponse errors = new ErrorResponse(violations);
@@ -64,29 +72,19 @@ public class AlunoRequestTest {
       factory.close();
    }
 
-   @Test
-   public void equalsAndHashCode() {
-      var aluno1 = new AlunoRequestDTO(name, cpf);
-      var aluno2 = new AlunoRequestDTO(name, cpf);
+   private void executeAssertions(Validator validator, ProfessorRequestDTO dto) {
+      final var violations = validator.validate(dto);
 
-      Assertions.assertTrue(aluno1.equals(aluno2) && aluno2.equals(aluno1));
-      Assertions.assertTrue(aluno1.hashCode() == aluno2.hashCode());
+      Assertions.assertTrue(violations.isEmpty());
+      Assertions.assertEquals(nome, dto.getNome());
+      Assertions.assertEquals(cpf, dto.getCpf());
    }
 
    static Stream<Arguments> invalidFields() {
       return Stream.of(
             arguments(null, cpf, "É necessário informar o nome"),
             arguments("", cpf, "É necessário informar o nome"),
-            arguments(name, null, "É necessário informar o CPF"),
-            arguments(name, "", "É necessário informar o CPF"));
+            arguments(nome, null, "É necessário informar o CPF"),
+            arguments(nome, "", "É necessário informar o CPF"));
    }
-
-   private void exectuteAssertions(final Validator validator, final AlunoRequestDTO request) {
-      final var violations = validator.validate(request);
-
-      Assertions.assertTrue(violations.isEmpty());
-      Assertions.assertEquals(name, request.getNome());
-      Assertions.assertEquals(cpf, request.getCpf());
-   }
-
 }
