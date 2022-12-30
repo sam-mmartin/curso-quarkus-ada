@@ -17,8 +17,6 @@ import teste.domain.VOs.matricula.Matricula;
 import teste.domain.aluno.Aluno;
 import teste.domain.curso.Curso;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class AlunoEntityTest {
@@ -67,18 +65,22 @@ public class AlunoEntityTest {
 
    @ParameterizedTest
    @MethodSource("invalidFields")
-   public void notValidFields(final String parameter, final String errorMessage) {
+   public void notValidFields(final String nome, final String cpf, final String errorMessage) {
       final var factory = Validation.buildDefaultValidatorFactory();
       final var validator = factory.getValidator();
 
       var entity = new Aluno();
-      entity.setNome(parameter);
+      entity.setNome(nome);
       entity.setCpf(cpf);
+
       var violations = validator.validate(entity);
+      ErrorResponse errors = new ErrorResponse(violations);
 
       violations.forEach(error -> {
-         assertEquals(errorMessage, error.getMessage());
+         Assertions.assertEquals(errorMessage, errors.getMessage());
       });
+
+      factory.close();
    }
 
    private void assertionsSomeArgs(final Validator validator, final Aluno entity) {
@@ -105,13 +107,15 @@ public class AlunoEntityTest {
    }
 
    static Stream<Arguments> invalidFields() {
+      String fiveZero = "012345678901234567890123456789012345678901234567890";
       return Stream.of(
-            arguments(null, "O nome do aluno é obrigatório"),
-            arguments("", "O nome do aluno é obrigatório"),
-            arguments("ex", "O nome do aluno deve possuir no mínimo 3 e no máximo 50 caracteres"),
-            arguments(null, "O CPF é obrigatório"),
-            arguments("", "O CPF é obrigatório"),
-            arguments("000.111.222-33", "CPF inválido"));
+            arguments(null, cpf, "O nome do aluno é obrigatório"),
+            arguments("   ", cpf, "O nome do aluno é obrigatório"),
+            arguments("ex", cpf, "O nome do aluno deve possuir no mínimo 3 e no máximo 50 caracteres"),
+            arguments(fiveZero, cpf, "O nome do aluno deve possuir no mínimo 3 e no máximo 50 caracteres"),
+            arguments(nome, "", "CPF inválido"),
+            arguments(nome, null, "CPF inválido"),
+            arguments(nome, "000.111.222-33", "CPF inválido"));
    }
 
 }
