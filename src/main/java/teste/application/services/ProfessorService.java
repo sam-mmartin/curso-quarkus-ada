@@ -12,7 +12,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
-import javax.ws.rs.NotFoundException;
 
 import teste.application.dto.Mensagem;
 import teste.application.dto.curso.CursoRequestDTO;
@@ -22,6 +21,7 @@ import teste.application.dto.professor.ProfessorRequestDTO;
 import teste.application.dto.professor.ProfessorPersonInfosResponseDTO;
 import teste.application.exceptions.CustomConstraintException;
 import teste.application.exceptions.ErrorResponse;
+import teste.application.exceptions.NotFoundException;
 import teste.application.interfaces.mapper.ProfessorMapper;
 import teste.application.interfaces.services.ServiceGenerics;
 import teste.application.interfaces.services.ServiceCadastroMatricula;
@@ -83,7 +83,7 @@ public class ProfessorService implements ServiceGenerics<ProfessorPersonInfosRes
       Professor professor = repositorio.buscarPorMatricula(matricula);
 
       if (Objects.isNull(professor)) {
-         return null;
+         throw new NotFoundException("Professor não encontrado!");
       }
 
       return professorMapper.toResourceWithCursos(professor);
@@ -185,10 +185,10 @@ public class ProfessorService implements ServiceGenerics<ProfessorPersonInfosRes
          throw new NotFoundException("Disciplina não encontrada!");
       }
 
-      ProfessorDisciplina apagar = repositorioPD.find("professor_id = ?1, disciplina_id = ?2", professor.getId(),
-            disciplina.getId()).firstResult();
+      try {
+         ProfessorDisciplina apagar = repositorioPD.find("professor_id = ?1 and disciplina_id = ?2", professor.getId(),
+               disciplina.getId()).firstResult();
 
-      if (repositorioPD.isPersistent(apagar)) {
          repositorioPD.delete(apagar);
 
          professor.setObservacao("Disciplina: "
@@ -203,10 +203,11 @@ public class ProfessorService implements ServiceGenerics<ProfessorPersonInfosRes
                + professor.getNome()
                + ". Matrícula: " + professor.getMatricula().getNumero());
          return mensagem;
-      } else {
-         throw new Exception("Erro - Dados não encontrados na base de dados!");
+      } catch (NullPointerException e) {
+         throw new NotFoundException("Professor não leciona a disciplina informada!");
+      } catch (Exception e) {
+         throw new Exception(e.getMessage());
       }
-
    }
 
    @Transactional(rollbackOn = Exception.class)
