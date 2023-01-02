@@ -82,14 +82,12 @@ public class AlunoMapperTest {
       entity_1.setId(ID_1);
       entity_1.setMatricula(new Matricula(MATRICULA_1));
       entity_1.setEstado(ESTADO);
-      entity_1.setCursoMatriculado(curso);
       entity_1.setDataCriacao(DATA);
       entity_1.setDataAtualizacao(DATA);
 
       entity_2.setId(ID_2);
       entity_2.setMatricula(new Matricula(MATRICULA_2));
       entity_2.setEstado(ESTADO);
-      entity_2.setCursoMatriculado(curso);
       entity_2.setDataCriacao(DATA);
       entity_2.setDataAtualizacao(DATA);
    }

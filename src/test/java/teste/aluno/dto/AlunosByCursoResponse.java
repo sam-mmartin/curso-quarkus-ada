@@ -1,4 +1,4 @@
-package teste.aluno;
+package teste.aluno.dto;
 
 import javax.validation.Validation;
 import javax.validation.Validator;

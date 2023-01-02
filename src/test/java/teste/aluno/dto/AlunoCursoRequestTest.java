@@ -1,4 +1,4 @@
-package teste.aluno;
+package teste.aluno.dto;
 
 import java.util.stream.Stream;
 
