@@ -14,7 +14,6 @@ import io.quarkus.test.junit.QuarkusTest;
 import teste.domain.aluno.Aluno;
 import teste.domain.curso.Curso;
 import teste.infrastructure.aluno.AlunoRepositoryJDBC;
-import teste.infrastructure.curso.CursoRepositoryJDBC;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -30,14 +29,15 @@ public class AlunoRepositoryTest {
    @Inject
    AlunoRepositoryJDBC repositorio;
 
-   @Inject
-   CursoRepositoryJDBC cursoRepository;
-
    @Test
    @Order(1)
    @Transactional
    public void listarTodos() {
       try {
+         curso.setId(1);
+         curso.setObservacao("Curso implantado");
+         entity_1.setCursoMatriculado(curso);
+         entity_2.setCursoMatriculado(curso);
          saveToRepository(repositorio, entity_1, entity_2);
          var actual = repositorio.listarTodos();
 
@@ -129,7 +129,6 @@ public class AlunoRepositoryTest {
    }
 
    private void saveToRepository(AlunoRepositoryJDBC repositorio, Aluno... entities) throws Exception {
-      cursoRepository.persist(curso);
       for (Aluno entity : entities) {
          repositorio.matricular(entity);
       }
