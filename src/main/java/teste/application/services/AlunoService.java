@@ -39,7 +39,7 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
       Aluno aluno = repositorio.buscarPorId(id);
 
       if (Objects.isNull(aluno)) {
-         return null;
+         throw new NotFoundException("Aluno não encontrado!");
       }
 
       return alunoMapper.toResource(aluno);
@@ -55,7 +55,7 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
       Aluno aluno = repositorio.buscarPorMatricula(matricula);
 
       if (Objects.isNull(aluno)) {
-         return null;
+         throw new NotFoundException("Aluno não encontrado!");
       }
 
       return alunoMapper.toResource(aluno);

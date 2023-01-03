@@ -45,12 +45,19 @@ public class AlunoServiceTest {
    private AlunoService service = new AlunoService(repository, cursoRepository, mapper);
 
    @Test
-   public void getById() throws Exception {
+   void getById() throws Exception {
       given(repository.buscarPorId(ID)).willReturn(entity1);
       given(mapper.toResource(entity1)).willReturn(response1);
 
       var actual = service.getById(ID);
       assertEquals(response1, actual);
+   }
+
+   @Test
+   void getByIdNotFound() throws Exception {
+      assertThrows(NotFoundException.class,
+            () -> service.getById(ID),
+            "Aluno não encontrado!");
    }
 
    @Test
@@ -75,6 +82,13 @@ public class AlunoServiceTest {
       var actual = service.getByMatricula("0000");
 
       assertEquals(response1, actual);
+   }
+
+   @Test
+   void getByMatriculaNotFound() throws Exception {
+      assertThrows(NotFoundException.class,
+            () -> service.getByMatricula("0000"),
+            "Aluno não encontrado!");
    }
 
    @Test
