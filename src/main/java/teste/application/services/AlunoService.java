@@ -3,11 +3,11 @@ package teste.application.services;
 import java.util.List;
 import java.util.Objects;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
+import lombok.RequiredArgsConstructor;
 import teste.application.dto.Mensagem;
 import teste.application.dto.aluno.AlunoCursoRequestDTO;
 import teste.application.dto.aluno.AlunoRequestDTO;
@@ -15,6 +15,7 @@ import teste.application.dto.aluno.AlunoResponseDTO;
 import teste.application.dto.aluno.AlunosByCursoResponseDTO;
 import teste.application.exceptions.CustomConstraintException;
 import teste.application.exceptions.ErrorResponse;
+import teste.application.exceptions.NotFoundException;
 import teste.application.interfaces.mapper.AlunoMapper;
 import teste.application.interfaces.services.ServiceAluno;
 import teste.application.interfaces.services.ServiceGenerics;
@@ -25,17 +26,13 @@ import teste.infrastructure.aluno.AlunoRepositoryJDBC;
 import teste.infrastructure.curso.CursoRepositoryJDBC;
 
 @RequestScoped
+@RequiredArgsConstructor
 public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponseDTO, AlunoCursoRequestDTO>,
       ServiceCadastroMatricula<AlunoResponseDTO, AlunoRequestDTO> {
 
-   @Inject
-   AlunoRepositoryJDBC repositorio;
-
-   @Inject
-   CursoRepositoryJDBC cursoRepositorio;
-
-   @Inject
-   AlunoMapper alunoMapper;
+   private final AlunoRepositoryJDBC repositorio;
+   private final CursoRepositoryJDBC cursoRepositorio;
+   private final AlunoMapper alunoMapper;
 
    @Override
    public AlunoResponseDTO getById(int id) throws Exception {
@@ -124,7 +121,7 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
       Mensagem mensagem = new Mensagem();
 
       if (Objects.isNull(aluno)) {
-         mensagem.setTexto("Matrícula não encontrada!");
+         throw new NotFoundException("Matrícula não encontrada!");
       }
 
       if (aluno.isEstado()) {
@@ -144,7 +141,7 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
       Mensagem mensagem = new Mensagem();
 
       if (Objects.isNull(aluno)) {
-         mensagem.setTexto("Matrícula não encontrada!");
+         throw new NotFoundException("Matrícula não encontrada!");
       }
 
       if (aluno.isEstado()) {
