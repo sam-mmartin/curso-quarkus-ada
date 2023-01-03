@@ -69,10 +69,10 @@ public class AlunoServiceTest {
 
    @Test
    public void getByMatricula() throws Exception {
-      given(repository.buscarPorMatricula("1010-100")).willReturn(entity1);
+      given(repository.buscarPorMatricula("0000")).willReturn(entity1);
       given(mapper.toResource(entity1)).willReturn(response1);
 
-      var actual = service.getByMatricula("1010-100");
+      var actual = service.getByMatricula("0000");
 
       assertEquals(response1, actual);
    }
@@ -145,6 +145,8 @@ public class AlunoServiceTest {
       assertThrows(CustomConstraintException.class,
             () -> service.rematricularAluno("0000"),
             expected.getMessage());
+
+      verify(repository, never()).rematricular(any(Aluno.class));
    }
 
    @Test
@@ -153,7 +155,7 @@ public class AlunoServiceTest {
             () -> service.rematricularAluno("0000"),
             "Matrícula não encontrada!");
 
-      verify(repository, never()).matricular(any(Aluno.class));
+      verify(repository, never()).rematricular(any(Aluno.class));
    }
 
    @Test
@@ -176,6 +178,8 @@ public class AlunoServiceTest {
       assertThrows(CustomConstraintException.class,
             () -> service.cancelarMatricula("0000"),
             "Aluno: " + entity1.getNome() + " não está matriculado!");
+
+      verify(repository, never()).cancelarMatricula(any(Aluno.class));
    }
 
    @Test
@@ -185,6 +189,8 @@ public class AlunoServiceTest {
       assertThrows(CustomConstraintException.class,
             () -> service.cancelarMatricula("0000"),
             "Matrícula não encontrada!");
+
+      verify(repository, never()).cancelarMatricula(any(Aluno.class));
    }
 
    private Aluno criaAluno() {
