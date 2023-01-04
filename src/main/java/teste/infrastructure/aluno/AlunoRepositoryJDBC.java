@@ -1,14 +1,11 @@
 package teste.infrastructure.aluno;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
@@ -30,13 +27,7 @@ public class AlunoRepositoryJDBC implements RepositoryAluno {
       String nameQuery = "CONSULTAR_ALUNOS";
       TypedQuery<Aluno> query = em.createNamedQuery(nameQuery, Aluno.class);
 
-      try {
-         return query.getResultList();
-      } catch (NoResultException e) {
-         return new ArrayList<>();
-      } catch (PersistenceException e) {
-         throw new Exception(e);
-      }
+      return query.getResultList();
    }
 
    @Override
@@ -45,22 +36,12 @@ public class AlunoRepositoryJDBC implements RepositoryAluno {
       TypedQuery<Aluno> query = em.createNamedQuery(nameQuery, Aluno.class)
             .setParameter("matricula", matricula);
 
-      try {
-         return query.getSingleResult();
-      } catch (NoResultException e) {
-         throw new Exception(e);
-      } catch (PersistenceException e) {
-         throw new Exception(e);
-      }
+      return query.getSingleResult();
    }
 
    @Override
    public Aluno buscarPorId(int id) throws Exception {
-      try {
-         return em.find(Aluno.class, id);
-      } catch (NoResultException e) {
-         throw new Exception(e);
-      }
+      return em.find(Aluno.class, id);
    }
 
    @Override
@@ -69,57 +50,51 @@ public class AlunoRepositoryJDBC implements RepositoryAluno {
       TypedQuery<Aluno> query = em.createNamedQuery(nameQuery, Aluno.class)
             .setParameter("curso_id", idCurso);
 
-      try {
-         return query.getResultList();
-      } catch (NoResultException e) {
-         return new ArrayList<>();
-      } catch (PersistenceException e) {
-         throw new Exception(e);
-      }
+      return query.getResultList();
    }
 
    @Override
    @Transactional
-   public void matricular(Aluno aluno) throws Exception {
-      try {
-         LocalDateTime datetime = LocalDateTime.now();
-         aluno.setEstado(true);
-         aluno.setMatricula(mr.gerarMatricula());
-         aluno.setDataCriacao(datetime);
-         aluno.setDataAtualizacao(datetime);
-
-         em.persist(aluno);
-      } catch (PersistenceException e) {
-         throw new Exception(e);
-      }
-   }
-
-   @Override
-   public void rematricular(Aluno aluno) throws Exception {
+   public Aluno matricular(Aluno aluno) throws Exception {
+      LocalDateTime datetime = LocalDateTime.now();
       aluno.setEstado(true);
-      update(aluno);
+      aluno.setMatricula(mr.gerarMatricula());
+      aluno.setDataCriacao(datetime);
+      aluno.setDataAtualizacao(datetime);
+
+      em.persist(aluno);
+
+      return aluno;
    }
 
    @Override
-   public void atualizarCadastroDoAluno(Aluno aluno) throws Exception {
-      update(aluno);
+   public Aluno rematricular(Aluno aluno) throws Exception {
+      aluno.setEstado(true);
+      return update(aluno);
    }
 
    @Override
-   public void cancelarMatricula(Aluno aluno) throws Exception {
+   public Aluno atualizarCadastroDoAluno(Aluno aluno) throws Exception {
+      return update(aluno);
+   }
+
+   @Override
+   public Aluno cancelarMatricula(Aluno aluno) throws Exception {
       aluno.setEstado(false);
-      update(aluno);
+      return update(aluno);
    }
 
-   private void update(Aluno aluno) throws Exception {
-      try {
-         LocalDateTime datetime = LocalDateTime.now();
-         aluno.setDataAtualizacao(datetime);
+   public void apagarRegistro(Aluno aluno) throws Exception {
+      em.remove(aluno);
+   }
 
-         em.merge(aluno);
-      } catch (PersistenceException e) {
-         throw new Exception(e);
-      }
+   private Aluno update(Aluno aluno) throws Exception {
+      LocalDateTime datetime = LocalDateTime.now();
+      aluno.setDataAtualizacao(datetime);
+
+      em.merge(aluno);
+
+      return aluno;
    }
 
 }

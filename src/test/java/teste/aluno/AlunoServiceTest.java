@@ -138,6 +138,16 @@ public class AlunoServiceTest {
    }
 
    @Test
+   void updateAlunoNotFound() throws Exception {
+      var request = Mockito.mock(AlunoRequestDTO.class);
+
+      assertThrows(NotFoundException.class,
+            () -> service.updateCadastro("0000", request),
+            "Aluno não encontrado!");
+      verify(repository, never()).atualizarCadastroDoAluno(any(Aluno.class));
+   }
+
+   @Test
    void rematricular() throws Exception {
       var expected = new Mensagem("Rematrícula realizada com sucesso.");
 
@@ -150,11 +160,11 @@ public class AlunoServiceTest {
    }
 
    @Test
-   void alunoNaoPodeSerMatriculadoPorqueJaEstaMatriculado() throws Exception {
+   void alunoNaoPodeSerRematriculadoPorqueJaEstaMatriculado() throws Exception {
       var expected = new CustomConstraintException("Aluno já está matriculado!");
 
       given(repository.buscarPorMatricula("0000")).willReturn(entity1);
-      given(entity1.isEstado()).willThrow(expected);
+      given(entity1.isEstado()).willReturn(true);
 
       assertThrows(CustomConstraintException.class,
             () -> service.rematricularAluno("0000"),
@@ -164,7 +174,7 @@ public class AlunoServiceTest {
    }
 
    @Test
-   void alunoNaoPodeSerMatriculadoPorqueMatriculaNaoFoiEncontrada() throws Exception {
+   void alunoNaoPodeSerRematriculadoPorqueMatriculaNaoFoiEncontrada() throws Exception {
       assertThrows(NotFoundException.class,
             () -> service.rematricularAluno("0000"),
             "Matrícula não encontrada!");
@@ -198,9 +208,7 @@ public class AlunoServiceTest {
 
    @Test
    void matriculaNaoPodeSerCanceladaPorqueMatriculaNaoFoiEncontrada() throws Exception {
-      given(repository.buscarPorMatricula("0000")).willReturn(entity1);
-
-      assertThrows(CustomConstraintException.class,
+      assertThrows(NotFoundException.class,
             () -> service.cancelarMatricula("0000"),
             "Matrícula não encontrada!");
 

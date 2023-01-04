@@ -51,46 +51,12 @@ public class AlunoCursoRequestTest {
    }
 
    @ParameterizedTest
-   @MethodSource("invalidNameFields")
-   public void nameNotBlank(final String name, final String errorMessage) {
+   @MethodSource("invalidFields")
+   public void camposInvalidos(final String name, final String cpf, final String curso, final String errorMessage) {
       final var factory = Validation.buildDefaultValidatorFactory();
       final var validator = factory.getValidator();
 
       var request = new AlunoCursoRequestDTO(name, cpf, curso);
-
-      final var violations = validator.validate(request);
-      ErrorResponse errors = new ErrorResponse(violations);
-
-      Assertions.assertFalse(violations.isEmpty());
-      Assertions.assertEquals(errorMessage, errors.getMessage());
-
-      factory.close();
-   }
-
-   @ParameterizedTest
-   @MethodSource("invalidCpfFields")
-   public void cpfNotBlank(final String cpf, final String errorMessage) {
-      final var factory = Validation.buildDefaultValidatorFactory();
-      final var validator = factory.getValidator();
-
-      var request = new AlunoCursoRequestDTO(nome, cpf, curso);
-
-      final var violations = validator.validate(request);
-      ErrorResponse errors = new ErrorResponse(violations);
-
-      Assertions.assertFalse(violations.isEmpty());
-      Assertions.assertEquals(errorMessage, errors.getMessage());
-
-      factory.close();
-   }
-
-   @ParameterizedTest
-   @MethodSource("invalidCursoFields")
-   public void cursoNotBlank(final String curso, final String errorMessage) {
-      final var factory = Validation.buildDefaultValidatorFactory();
-      final var validator = factory.getValidator();
-
-      var request = new AlunoCursoRequestDTO(nome, cpf, curso);
 
       final var violations = validator.validate(request);
       ErrorResponse errors = new ErrorResponse(violations);
@@ -106,8 +72,25 @@ public class AlunoCursoRequestTest {
       var aluno1 = new AlunoCursoRequestDTO(nome, cpf, curso);
       var aluno2 = new AlunoCursoRequestDTO(nome, cpf, curso);
 
-      Assertions.assertTrue(aluno1.equals(aluno2) && aluno2.equals(aluno1));
-      Assertions.assertTrue(aluno1.hashCode() == aluno2.hashCode());
+      Assertions.assertEquals(aluno1, aluno2);
+      Assertions.assertEquals(aluno1.hashCode(), aluno2.hashCode());
+   }
+
+   @Test
+   public void notEqualsAndHashCode() {
+      var aluno1 = new AlunoCursoRequestDTO(nome, cpf, curso);
+      var aluno3 = new AlunoCursoRequestDTO("nome", "cpf", "curso");
+
+      Assertions.assertNotEquals(aluno1, aluno3);
+      Assertions.assertNotEquals(aluno1.hashCode(), aluno3.hashCode());
+   }
+
+   @Test
+   void dtoToString() {
+      var aluno = new AlunoCursoRequestDTO(nome, cpf, curso);
+      String toString = "AlunoCursoRequestDTO(nome=Mallu Estácio, cpf=830.173.730-10, curso=Alimentos)";
+
+      Assertions.assertEquals(toString, aluno.toString());
    }
 
    private void exectuteAssertions(final Validator validator, final AlunoCursoRequestDTO request) {
@@ -117,21 +100,13 @@ public class AlunoCursoRequestTest {
       Assertions.assertEquals(nome, request.getNome());
    }
 
-   static Stream<Arguments> invalidNameFields() {
+   static Stream<Arguments> invalidFields() {
       return Stream.of(
-            arguments(null, "É necessário informar o nome"),
-            arguments("", "É necessário informar o nome"));
-   }
-
-   static Stream<Arguments> invalidCpfFields() {
-      return Stream.of(
-            arguments(null, "É necessário informar o CPF"),
-            arguments("", "É necessário informar o CPF"));
-   }
-
-   static Stream<Arguments> invalidCursoFields() {
-      return Stream.of(
-            arguments(null, "É necessário informar o nome do curso"),
-            arguments("", "É necessário informar o nome do curso"));
+            arguments(null, cpf, curso, "É necessário informar o nome"),
+            arguments("", cpf, curso, "É necessário informar o nome"),
+            arguments(nome, null, curso, "É necessário informar o CPF"),
+            arguments(nome, "", curso, "É necessário informar o CPF"),
+            arguments(nome, cpf, null, "É necessário informar o nome do curso"),
+            arguments(nome, cpf, "", "É necessário informar o nome do curso"));
    }
 }

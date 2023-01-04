@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.enterprise.context.RequestScoped;
 import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import teste.application.dto.aluno.AlunoRequestDTO;
 import teste.application.dto.aluno.AlunoResponseDTO;
 import teste.application.dto.aluno.AlunosByCursoResponseDTO;
 import teste.application.exceptions.CustomConstraintException;
-import teste.application.exceptions.ErrorResponse;
 import teste.application.exceptions.NotFoundException;
 import teste.application.interfaces.mapper.AlunoMapper;
 import teste.application.interfaces.services.ServiceAluno;
@@ -72,45 +70,34 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
    @Transactional(rollbackOn = Exception.class)
    @Valid
    public Mensagem create(AlunoCursoRequestDTO alunoDTO) throws Exception {
-      Mensagem mensagem;
+      Aluno novo = alunoMapper.toEntityCreate(alunoDTO);
+      Curso curso = cursoRepositorio.buscarPorNomeDoCurso(alunoDTO.getCurso());
+      novo.setCursoMatriculado(curso);
 
-      try {
-         Aluno novo = alunoMapper.toEntityCreate(alunoDTO);
-         Curso curso = cursoRepositorio.buscarPorNomeDoCurso(alunoDTO.getCurso());
-         novo.setCursoMatriculado(curso);
-
-         repositorio.matricular(novo);
-         mensagem = new Mensagem(
-               "Aluno: " + novo.getNome()
-                     + " matriculado com sucesso no curso " + curso.getNomeDoCurso()
-                     + ". Nº de matricula: " + novo.getMatricula().getNumero());
-
-      } catch (ConstraintViolationException e) {
-         ErrorResponse result = new ErrorResponse(e.getConstraintViolations());
-         mensagem = new Mensagem(result.getMessage());
-      }
-
+      repositorio.matricular(novo);
+      Mensagem mensagem = new Mensagem(
+            "Aluno: " + novo.getNome()
+                  + " matriculado com sucesso no curso " + curso.getNomeDoCurso()
+                  + ". Nº de matricula: " + novo.getMatricula().getNumero());
       return mensagem;
+
    }
 
    @Override
    @Transactional(rollbackOn = Exception.class)
    @Valid
    public Mensagem updateCadastro(String matricula, AlunoRequestDTO alunoDTO) throws Exception {
-      Mensagem mensagem;
+      Aluno aluno = repositorio.buscarPorMatricula(matricula);
 
-      try {
-         Aluno aluno = repositorio.buscarPorMatricula(matricula);
-         aluno.setNome(alunoDTO.getNome());
-         aluno.setCpf(alunoDTO.getCpf());
-
-         repositorio.atualizarCadastroDoAluno(aluno);
-         mensagem = new Mensagem("Cadastro atualizado com sucesso.");
-      } catch (ConstraintViolationException e) {
-         ErrorResponse result = new ErrorResponse(e.getConstraintViolations());
-         mensagem = new Mensagem(result.getMessage());
+      if (Objects.isNull(aluno)) {
+         throw new NotFoundException("Aluno não encontrado!");
       }
 
+      aluno.setNome(alunoDTO.getNome());
+      aluno.setCpf(alunoDTO.getCpf());
+
+      repositorio.atualizarCadastroDoAluno(aluno);
+      Mensagem mensagem = new Mensagem("Cadastro atualizado com sucesso.");
       return mensagem;
    }
 
