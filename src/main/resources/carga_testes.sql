@@ -15,9 +15,9 @@ INSERT INTO CURSO (id, data_criacao, data_atualizacao, nomeDoCurso,  observacao)
 INSERT INTO CURSO (id, data_criacao, data_atualizacao, nomeDoCurso,  observacao) VALUES (5, '2022-12-27 18:19:56.686055000', '2022-12-27 18:19:56.686055000', 'Técnico em Desenvolvimento de Sistemas', 'Curso implantado');
 INSERT INTO CURSO (id, data_criacao, data_atualizacao, nomeDoCurso,  observacao) VALUES (6, '2022-12-27 18:20:11.895232000', '2022-12-27 18:20:11.895232000', 'Técnico em Segurança do Trabalho', 'Curso implantado');
 
-INSERT INTO ALUNO (id, nome, cpf, matricula, estado, curso_id, data_criacao, data_atualizacao) VALUES (1, 'Juliana Cintra', '546.212.310-81', '1010-100', 1, 1, '2022-12-27 18:00:58.892711000','2022-12-27 18:00:58.892711000');
-INSERT INTO ALUNO (id, nome, cpf, matricula, estado, curso_id, data_criacao, data_atualizacao) VALUES (2, 'Mallu Estácio', '546.212.310-81', '1010-200', 1, 1, '2022-12-27 18:00:58.892711000','2022-12-27 18:00:58.892711000');
-INSERT INTO ALUNO (id, nome, cpf, matricula, estado, curso_id, data_criacao, data_atualizacao) VALUES (3, 'Thays Soares', '546.212.310-81', '1010-300', 0, 1, '2022-12-27 18:00:58.892711000','2022-12-27 18:00:58.892711000');
+INSERT INTO ALUNO (id, nome, cpf, matricula, estado, curso_id, data_criacao, data_atualizacao) VALUES (1, 'Unknow 1', '546.212.310-81', '1010-100', 1, 1, '2022-12-27 18:00:58.892711000','2022-12-27 18:00:58.892711000');
+INSERT INTO ALUNO (id, nome, cpf, matricula, estado, curso_id, data_criacao, data_atualizacao) VALUES (2, 'Unknow 2', '546.212.310-81', '1010-200', 1, 1, '2022-12-27 18:00:58.892711000','2022-12-27 18:00:58.892711000');
+INSERT INTO ALUNO (id, nome, cpf, matricula, estado, curso_id, data_criacao, data_atualizacao) VALUES (3, 'Unknow 3', '546.212.310-81', '1010-300', 0, 1, '2022-12-27 18:00:58.892711000','2022-12-27 18:00:58.892711000');
 
 INSERT INTO PROFESSOR (id, nome, cpf, matricula, estado, data_criacao, data_atualizacao, observacao) VALUES (1, 'Samuel', '546.212.310-81', '1000-100', 1, '2022-12-27 18:00:58.892711000','2022-12-27 18:00:58.892711000', 'Contrato iniciado');
 

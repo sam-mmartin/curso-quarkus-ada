@@ -22,7 +22,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 public class AlunoEntityTest {
 
    private static final int id = 1;
-   private static final String nome = "Mallu Estácio";
+   private static final String nome = "Unknow 2";
    private static final String cpf = "830.173.730-10";
    private static final Matricula matricula = new Matricula("1000-000");
    private static final boolean estado = true;

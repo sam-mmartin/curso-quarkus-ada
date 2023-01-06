@@ -18,7 +18,7 @@ import teste.application.exceptions.ErrorResponse;
 
 public class AlunoRequestTest {
 
-   private static final String name = "Mallu Estácio";
+   private static final String name = "Unknow 2";
    private static final String cpf = "830.173.730-10";
 
    @Test

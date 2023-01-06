@@ -18,7 +18,7 @@ import teste.application.exceptions.ErrorResponse;
 
 public class AlunoCursoRequestTest {
 
-   private static final String nome = "Mallu Estácio";
+   private static final String nome = "Unknow 2";
    private static final String cpf = "830.173.730-10";
    private static final String curso = "Alimentos";
 
@@ -88,7 +88,7 @@ public class AlunoCursoRequestTest {
    @Test
    void dtoToString() {
       var aluno = new AlunoCursoRequestDTO(nome, cpf, curso);
-      String toString = "AlunoCursoRequestDTO(nome=Mallu Estácio, cpf=830.173.730-10, curso=Alimentos)";
+      String toString = "AlunoCursoRequestDTO(nome=Unknow 2, cpf=830.173.730-10, curso=Alimentos)";
 
       Assertions.assertEquals(toString, aluno.toString());
    }

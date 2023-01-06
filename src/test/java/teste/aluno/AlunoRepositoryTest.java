@@ -21,16 +21,16 @@ import teste.infrastructure.curso.CursoRepositoryJDBC;
 @QuarkusTest
 public class AlunoRepositoryTest {
 
-   private static final String NOME = "Juliana Cintra";
+   private static final String NOME = "Unknow 1";
    private static final String CPF = "546.212.310-81";
    private static final String MATRICULA = "1010-100";
    private static final String CURSO = "ANÁLISES QUÍMICA";
 
    private static final String[] parameters = { NOME, CPF, MATRICULA, CURSO };
    private static final String[][] all = {
-         { "Juliana Cintra", CPF, "1010-100", CURSO },
-         { "Mallu Estácio", CPF, "1010-200", CURSO },
-         { "Thays Soares", CPF, "1010-300", CURSO }
+         { "Unknow 1", CPF, "1010-100", CURSO },
+         { "Unknow 2", CPF, "1010-200", CURSO },
+         { "Unknow 3", CPF, "1010-300", CURSO }
    };
 
    @Inject
@@ -179,6 +179,7 @@ public class AlunoRepositoryTest {
       entity.setCpf("384.777.090-09");
 
       var actual = repositorio.atualizarCadastroDoAluno(entity);
+
       String[] expected = {
             entity.getNome(),
             entity.getCpf(),

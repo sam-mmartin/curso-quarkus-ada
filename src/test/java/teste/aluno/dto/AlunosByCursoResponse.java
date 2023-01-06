@@ -10,7 +10,7 @@ import teste.application.dto.aluno.AlunosByCursoResponseDTO;
 
 public class AlunosByCursoResponse {
 
-   private static final String nome = "Mallu Estácio";
+   private static final String nome = "Unknow 2";
    private static final String matricula = "1000-000";
    private static final String estado = "ativo";
 
