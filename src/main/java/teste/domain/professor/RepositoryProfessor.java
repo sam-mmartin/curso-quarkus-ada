@@ -10,9 +10,9 @@ public interface RepositoryProfessor {
 
    public Professor buscarPorId(int id) throws Exception;
 
-   public void contratar(Professor professor) throws Exception;
+   public Professor contratar(Professor professor) throws Exception;
 
-   public void atualizarProfessor(Professor professor) throws Exception;
+   public Professor atualizarProfessor(Professor professor) throws Exception;
 
    public void demitir(Professor professor) throws Exception;
 }

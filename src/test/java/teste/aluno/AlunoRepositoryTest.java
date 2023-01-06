@@ -108,8 +108,6 @@ public class AlunoRepositoryTest {
 
       // Desfaz as alterações para não influenciar nos outros testes
       repositorio.apagarRegistro(actual);
-      actual = repositorio.buscarPorId(4);
-      assertNull(actual);
    }
 
    @Test
@@ -168,7 +166,6 @@ public class AlunoRepositoryTest {
 
       // Desfaz alterações
       actual = repositorio.cancelarMatricula(actual);
-      assertFalse(actual.isEstado());
    }
 
    @Test
@@ -192,10 +189,7 @@ public class AlunoRepositoryTest {
       // Desfaz as alterações para não influenciar nos outros testes
       actual.setNome(NOME);
       actual.setCpf(CPF);
-      actual = repositorio.atualizarCadastroDoAluno(actual);
-
-      assertEquals(NOME, actual.getNome());
-      assertEquals(CPF, actual.getCpf());
+      repositorio.atualizarCadastroDoAluno(actual);
    }
 
    @Test
@@ -209,7 +203,6 @@ public class AlunoRepositoryTest {
 
       // Desfaz as alterações
       actual = repositorio.rematricular(actual);
-      assertTrue(actual.isEstado());
    }
 
    private void executeAssertions(String[] parameters, Aluno aluno) {

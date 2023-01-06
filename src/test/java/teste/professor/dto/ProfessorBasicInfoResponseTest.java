@@ -12,13 +12,13 @@ public class ProfessorBasicInfoResponseTest {
    private static final String matricula = "MATRICULA";
 
    @Test
-   void contructorAllArgs() {
+   void testContructorAllArgs() {
       var response = new ProfessorBasicInfoResponseDTO(nome, matricula);
       executeAssertions(response);
    }
 
    @Test
-   void constructorDefault() {
+   void testConstructorDefault() {
       var response = new ProfessorBasicInfoResponseDTO();
       response.setNome(nome);
       response.setMatricula(matricula);
@@ -27,7 +27,7 @@ public class ProfessorBasicInfoResponseTest {
    }
 
    @Test
-   void equalsAndHashCode() {
+   void testEqualsAndHashCode() {
       var res_1 = new ProfessorBasicInfoResponseDTO(nome, matricula);
       var res_2 = new ProfessorBasicInfoResponseDTO(nome, matricula);
 

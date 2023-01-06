@@ -45,7 +45,6 @@ public class Professor {
    @Size(min = 3, max = 50, message = "O nome do professor deve possuir no mínimo 3 e no máximo 50 caracteres")
    private String nome;
 
-   @NotBlank(message = "O CPF é obrigatório")
    @CPF(message = "CPF inválido")
    private String cpf;
 

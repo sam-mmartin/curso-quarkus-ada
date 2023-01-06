@@ -30,7 +30,7 @@ public class ProfessorMasterInfoResponseTest {
    };
 
    @Test
-   void constructorAllArgs() {
+   void testConstructorAllArgs() {
       var response = new ProfessorMasterInfosResponseDTO(
             nome, matricula, estado, cursos, disciplinas);
 
@@ -38,7 +38,7 @@ public class ProfessorMasterInfoResponseTest {
    }
 
    @Test
-   void constructorDefault() {
+   void testConstructorDefault() {
       var response = new ProfessorMasterInfosResponseDTO();
       response.setNome(nome);
       response.setMatricula(matricula);
@@ -48,7 +48,7 @@ public class ProfessorMasterInfoResponseTest {
    }
 
    @Test
-   void equalsAndHashCode() {
+   void testEqualsAndHashCode() {
       var res_1 = new ProfessorMasterInfosResponseDTO(
             nome, matricula, estado, cursos, disciplinas);
       var res_2 = new ProfessorMasterInfosResponseDTO(

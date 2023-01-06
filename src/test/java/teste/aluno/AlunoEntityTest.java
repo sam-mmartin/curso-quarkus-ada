@@ -12,7 +12,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import teste.application.exceptions.ErrorResponse;
 import teste.domain.VOs.matricula.Matricula;
 import teste.domain.aluno.Aluno;
 import teste.domain.curso.Curso;
@@ -74,10 +73,9 @@ public class AlunoEntityTest {
       entity.setCpf(cpf);
 
       var violations = validator.validate(entity);
-      ErrorResponse errors = new ErrorResponse(violations);
 
-      violations.forEach(error -> {
-         Assertions.assertEquals(errorMessage, errors.getMessage());
+      violations.forEach(e -> {
+         Assertions.assertEquals(errorMessage, e.getMessage());
       });
 
       factory.close();

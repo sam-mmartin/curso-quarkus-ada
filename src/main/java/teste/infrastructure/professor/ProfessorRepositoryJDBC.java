@@ -1,18 +1,14 @@
 package teste.infrastructure.professor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
-import teste.application.exceptions.CustomConstraintException;
 import teste.domain.professor.Professor;
 import teste.domain.professor.RepositoryProfessor;
 
@@ -27,62 +23,44 @@ public class ProfessorRepositoryJDBC implements RepositoryProfessor {
       String nameQuery = "CONSULTAR_PROFESSORES";
       TypedQuery<Professor> query = em.createNamedQuery(nameQuery, Professor.class);
 
-      try {
-         return query.getResultList();
-      } catch (NoResultException e) {
-         return new ArrayList<>();
-      } catch (PersistenceException e) {
-         throw new Exception(e);
-      }
+      return query.getResultList();
    }
 
    @Override
-   public Professor buscarPorMatricula(String matricula) throws CustomConstraintException {
+   public Professor buscarPorMatricula(String matricula) throws Exception {
       String nameQuery = "CONSULTAR_PROFESSOR_POR_MATRICULA";
       TypedQuery<Professor> query = em.createNamedQuery(nameQuery, Professor.class)
             .setParameter("matricula", matricula);
 
-      try {
-         return query.getSingleResult();
-      } catch (NoResultException e) {
-         throw new CustomConstraintException(e.getMessage());
-      } catch (PersistenceException e) {
-         throw new CustomConstraintException(e.getMessage());
-      }
+      return query.getSingleResult();
    }
 
    @Override
    public Professor buscarPorId(int id) throws Exception {
-      try {
-         return em.find(Professor.class, id);
-      } catch (NoResultException e) {
-         throw new Exception(e);
-      }
+      return em.find(Professor.class, id);
    }
 
    @Override
    @Transactional
-   public void contratar(Professor professor) throws Exception {
+   public Professor contratar(Professor professor) throws Exception {
       em.persist(professor);
+      return professor;
    }
 
    @Override
    @Transactional
-   public void atualizarProfessor(Professor professor) throws Exception {
-      try {
-         LocalDateTime dateTime = LocalDateTime.now();
-         professor.setDataAtualizacao(dateTime);
+   public Professor atualizarProfessor(Professor professor) throws Exception {
+      LocalDateTime dateTime = LocalDateTime.now();
+      professor.setDataAtualizacao(dateTime);
 
-         em.merge(professor);
-      } catch (PersistenceException e) {
-         throw new CustomConstraintException(e.getMessage());
-      }
+      em.merge(professor);
+      return professor;
    }
 
    @Override
    @Transactional
    public void demitir(Professor professor) throws Exception {
-      em.remove(professor);
+      em.remove(em.contains(professor) ? professor : em.merge(professor));
    }
 
 }
