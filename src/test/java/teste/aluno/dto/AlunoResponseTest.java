@@ -1,9 +1,8 @@
 package teste.aluno.dto;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import teste.application.dto.aluno.AlunoResponseDTO;
@@ -21,9 +20,6 @@ public class AlunoResponseTest {
 
    @Test
    public void constructorAllArgs() {
-      final var factory = Validation.buildDefaultValidatorFactory();
-      final var validator = factory.getValidator();
-
       var response = new AlunoResponseDTO(
             id,
             nome,
@@ -34,16 +30,11 @@ public class AlunoResponseTest {
             dataCriacao,
             dataAtualizacao);
 
-      exectuteAssertions(validator, response);
-
-      factory.close();
+      exectuteAssertions(response);
    }
 
    @Test
    public void constructorDefault() {
-      final var factory = Validation.buildDefaultValidatorFactory();
-      final var validator = factory.getValidator();
-
       var response = new AlunoResponseDTO();
       response.setId(id);
       response.setNome(nome);
@@ -54,9 +45,7 @@ public class AlunoResponseTest {
       response.setDataCriacao(dataCriacao);
       response.setDataAtualizacao(dataAtualizacao);
 
-      exectuteAssertions(validator, response);
-
-      factory.close();
+      exectuteAssertions(response);
    }
 
    @Test
@@ -80,14 +69,18 @@ public class AlunoResponseTest {
             dataCriacao,
             dataAtualizacao);
 
-      Assertions.assertTrue(aluno1.equals(aluno2) && aluno2.equals(aluno1));
-      Assertions.assertTrue(aluno1.hashCode() == aluno2.hashCode());
+      assertTrue(aluno1.equals(aluno2) && aluno2.equals(aluno1));
+      assertTrue(aluno1.hashCode() == aluno2.hashCode());
    }
 
-   private void exectuteAssertions(final Validator validator, final AlunoResponseDTO response) {
-      final var violations = validator.validate(response);
+   private void exectuteAssertions(final AlunoResponseDTO response) {
+      assertEquals(nome, response.getNome());
+      assertEquals(cpf, response.getCpf());
+      assertEquals(matricula, response.getMatricula());
+      assertEquals(estado, response.getEstado());
+      assertEquals(curso, response.getCurso());
+      assertEquals(dataCriacao, response.getDataCriacao());
+      assertEquals(dataAtualizacao, response.getDataAtualizacao());
 
-      Assertions.assertTrue(violations.isEmpty());
-      Assertions.assertEquals(nome, response.getNome());
    }
 }
