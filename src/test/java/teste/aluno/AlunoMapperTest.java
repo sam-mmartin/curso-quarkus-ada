@@ -49,20 +49,20 @@ public class AlunoMapperTest {
    private final AlunoMapper mapper = new AlunoMapperImpl();
 
    @Test
-   public void toResource() {
+   void testToResource() {
       buildAluno();
       var actual = mapper.toResource(entity_1);
       Assertions.assertTrue(response_1.equals(actual));
    }
 
    @Test
-   void toResourceReturnNull() {
+   void testToResourceReturnNull() {
       var actual = mapper.toResource(null);
       assertNull(actual);
    }
 
    @Test
-   public void listToResource() {
+   void testListToResource() {
       buildAluno();
       var list = List.of(entity_1, entity_2);
       var listResponse = List.of(response_1, response_2);
@@ -72,20 +72,20 @@ public class AlunoMapperTest {
    }
 
    @Test
-   void listToResourceReturnNull() {
+   void testListToResourceReturnNull() {
       var actual = mapper.listToResource(null);
       assertNull(actual);
    }
 
    @Test
-   public void toResourceByCurso() {
+   void testToResourceByCurso() {
       buildAluno();
       var actual = mapper.toResourceByCurso(entity_1);
       Assertions.assertTrue(response_3.equals(actual));
    }
 
    @Test
-   public void listToResourceByCurso() {
+   void testListToResourceByCurso() {
       buildAluno();
       var list = List.of(entity_1, entity_2);
       var listResponse = List.of(response_3, response_4);
@@ -95,19 +95,19 @@ public class AlunoMapperTest {
    }
 
    @Test
-   void toResourceByCursoReturnNull() {
+   void testToResourceByCursoReturnNull() {
       var actual = mapper.toResourceByCurso(null);
       assertNull(actual);
    }
 
    @Test
-   void listToResourceByCursoReturnNull() {
+   void testListToResourceByCursoReturnNull() {
       var actual = mapper.listToResourceByCurso(null);
       assertNull(actual);
    }
 
    @Test
-   void toEntityCreate() {
+   void testToEntityCreate() {
       var request = new AlunoCursoRequestDTO(NOME_1, CPF_1, "CURSO 1");
       var actual = mapper.toEntityCreate(request);
 
@@ -116,13 +116,13 @@ public class AlunoMapperTest {
    }
 
    @Test
-   void toEntityCreateReturnNull() {
+   void testToEntityCreateReturnNull() {
       var actual = mapper.toEntityCreate(null);
       assertNull(actual);
    }
 
    @Test
-   void toEntityUpdate() {
+   void testToEntityUpdate() {
       var request = new AlunoRequestDTO(NOME_1, CPF_1);
       var actual = mapper.toEntityUpdate(request);
 
@@ -131,27 +131,27 @@ public class AlunoMapperTest {
    }
 
    @Test
-   void toEntityUpdateReturnNull() {
+   void testToEntityUpdateReturnNull() {
       var actual = mapper.toEntityUpdate(null);
       assertNull(actual);
    }
 
    @Test
-   void isStatusTrue() {
+   void testIsStatusTrue() {
       var actual = mapper.isStatus(true);
 
       assertEquals("Ativo", actual);
    }
 
    @Test
-   void isStatusFalse() {
+   void testIsStatusFalse() {
       var actual = mapper.isStatus(false);
 
       assertEquals("Inativo", actual);
    }
 
    @Test
-   void alunoMatriculaNumeroReturnNull() {
+   void testAlunoMatriculaNumeroReturnNull() {
       buildAluno();
       entity_1.setMatricula(new Matricula(null));
       var actual = mapper.toResource(entity_1);

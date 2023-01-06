@@ -1,5 +1,6 @@
 package teste.application.exceptions;
 
+import javax.persistence.NoResultException;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -19,6 +20,10 @@ public class SchoolExceptionHandler implements ExceptionMapper<Exception> {
       }
 
       if (exception instanceof NotFoundException) {
+         return Response.status(404).entity(new ErrorResponse(exception.getMessage(), false)).build();
+      }
+
+      if (exception instanceof NoResultException) {
          return Response.status(404).entity(new ErrorResponse(exception.getMessage(), false)).build();
       }
 

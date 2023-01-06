@@ -32,7 +32,7 @@ public class AlunoEntityTest {
    private static final LocalDateTime dataAtualizacao = LocalDateTime.now();
 
    @Test
-   public void constructorAllArgs() {
+   public void testConstructorAllArgs() {
       final var factory = Validation.buildDefaultValidatorFactory();
       final var validator = factory.getValidator();
 
@@ -44,7 +44,7 @@ public class AlunoEntityTest {
    }
 
    @Test
-   public void constructorDefault() {
+   public void testConstructorDefault() {
       final var factory = Validation.buildDefaultValidatorFactory();
       final var validator = factory.getValidator();
 
@@ -65,7 +65,7 @@ public class AlunoEntityTest {
 
    @ParameterizedTest
    @MethodSource("invalidFields")
-   public void notValidFields(final String nome, final String cpf, final String errorMessage) {
+   public void testNotValidFields(final String nome, final String cpf, final String errorMessage) {
       final var factory = Validation.buildDefaultValidatorFactory();
       final var validator = factory.getValidator();
 

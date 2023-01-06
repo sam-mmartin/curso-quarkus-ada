@@ -51,11 +51,6 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
    @Override
    public AlunoResponseDTO getByMatricula(String matricula) throws Exception {
       Aluno aluno = repositorio.buscarPorMatricula(matricula);
-
-      if (Objects.isNull(aluno)) {
-         throw new NotFoundException("Aluno não encontrado!");
-      }
-
       return alunoMapper.toResource(aluno);
    }
 
@@ -141,4 +136,9 @@ public class AlunoService implements ServiceAluno, ServiceGenerics<AlunoResponse
       return mensagem;
    }
 
+   @Transactional(rollbackOn = Exception.class)
+   public void apagarAluno(int id) throws Exception {
+      Aluno aluno = repositorio.buscarPorId(id);
+      repositorio.apagarRegistro(aluno);
+   }
 }

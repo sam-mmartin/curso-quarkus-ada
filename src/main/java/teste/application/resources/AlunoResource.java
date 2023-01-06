@@ -1,12 +1,12 @@
 package teste.application.resources;
 
-import java.util.Objects;
 import java.util.Set;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -46,13 +46,7 @@ public class AlunoResource {
    @GET
    @Path("/{id}")
    public Response buscarAlunoPorId(@PathParam("id") int id) throws Exception {
-
       AlunoResponseDTO alunoDTO = service.getById(id);
-
-      if (Objects.isNull(alunoDTO)) {
-         return Response.status(Response.Status.NOT_FOUND).build();
-      }
-
       return Response.ok(alunoDTO).build();
    }
 
@@ -60,11 +54,6 @@ public class AlunoResource {
    @Path("/matricula/{matricula}")
    public Response buscarAlunoPorMatricula(@PathParam("matricula") String matricula) throws Exception {
       AlunoResponseDTO alunoDTO = service.getByMatricula(matricula);
-
-      if (Objects.isNull(alunoDTO)) {
-         return Response.status(Response.Status.NOT_FOUND).build();
-      }
-
       return Response.ok(alunoDTO).build();
    }
 
@@ -113,5 +102,13 @@ public class AlunoResource {
       Mensagem mensagem = service.cancelarMatricula(matricula);
 
       return Response.ok(mensagem).build();
+   }
+
+   @DELETE
+   @Path("/{id}")
+   public Response apagarRegistroAcademico(@PathParam("id") int id) throws Exception {
+      service.apagarAluno(id);
+
+      return Response.noContent().build();
    }
 }

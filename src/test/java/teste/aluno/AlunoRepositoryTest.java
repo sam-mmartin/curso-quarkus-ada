@@ -26,9 +26,6 @@ public class AlunoRepositoryTest {
    private static final String MATRICULA = "1010-100";
    private static final String CURSO = "ANÁLISES QUÍMICA";
 
-   // private static final Aluno entity_2 = new Aluno("Unknow 1", "384.777.090-09",
-   // curso);
-
    private static final String[] parameters = { NOME, CPF, MATRICULA, CURSO };
    private static final String[][] all = {
          { "Juliana Cintra", CPF, "1010-100", CURSO },
@@ -43,7 +40,7 @@ public class AlunoRepositoryTest {
    CursoRepositoryJDBC cursoRepository;
 
    @Test
-   public void listarTodos() throws Exception {
+   void testListarTodos() throws Exception {
       var actual = repositorio.listarTodos();
       assertEquals(3, actual.size());
 
@@ -53,31 +50,31 @@ public class AlunoRepositoryTest {
    }
 
    @Test
-   void buscarPorMatricula() throws Exception {
+   void testBuscarPorMatricula() throws Exception {
       var actual = repositorio.buscarPorMatricula(MATRICULA);
       executeAssertions(parameters, actual);
    }
 
    @Test
-   void buscarPorMatriculaNotFound() {
+   void testBuscarPorMatriculaNotFound() {
       assertThrows(NoResultException.class,
             () -> repositorio.buscarPorMatricula("0000"));
    }
 
    @Test
-   public void buscarPorId() throws Exception {
+   void testBuscarPorId() throws Exception {
       var actual = repositorio.buscarPorId(1);
       executeAssertions(parameters, actual);
    }
 
    @Test
-   void buscarPorIdNotFound() throws Exception {
+   void testBuscarPorIdNotFound() throws Exception {
       var actual = repositorio.buscarPorId(4);
       assertNull(actual);
    }
 
    @Test
-   void listarAlunosPorCurso() throws Exception {
+   void testListarAlunosPorCurso() throws Exception {
       var actual = repositorio.listarAlunosPorCurso(1);
 
       assertEquals(3, actual.size());
@@ -87,14 +84,14 @@ public class AlunoRepositoryTest {
    }
 
    @Test
-   void listarAlunosPorCursoNoResult() throws Exception {
+   void testListarAlunosPorCursoNoResult() throws Exception {
       var actual = repositorio.listarAlunosPorCurso(2);
       assertTrue(actual.isEmpty());
    }
 
    @Test
    @Transactional
-   void matricular() throws Exception {
+   void testMatricular() throws Exception {
       var entity = new Aluno(
             "Unknow 1",
             "384.777.090-09",
@@ -117,7 +114,7 @@ public class AlunoRepositoryTest {
 
    @Test
    @Transactional
-   void matricularExceptionCPFInvalido() {
+   void testMatricularExceptionCPFInvalido() {
       assertThrows(ConstraintViolationException.class,
             () -> {
                var entity = new Aluno(
@@ -130,7 +127,7 @@ public class AlunoRepositoryTest {
 
    @Test
    @Transactional
-   void matricularExceptionNomeInvalido() {
+   void testMatricularExceptionNomeInvalido() {
       // Nome em branco
       assertThrows(ConstraintViolationException.class,
             () -> {
@@ -162,17 +159,21 @@ public class AlunoRepositoryTest {
 
    @Test
    @Transactional
-   void rematricular() throws Exception {
+   void testRematricular() throws Exception {
       var actual = repositorio.buscarPorId(3);
       actual = repositorio.rematricular(actual);
 
       assertTrue(actual.isEstado());
       executeAssertions(all[2], actual);
+
+      // Desfaz alterações
+      actual = repositorio.cancelarMatricula(actual);
+      assertFalse(actual.isEstado());
    }
 
    @Test
    @Transactional
-   void atatualizarCadastroDoAluno() throws Exception {
+   void testAtualizarCadastroDoAluno() throws Exception {
       var entity = repositorio.buscarPorId(1);
       entity.setNome("Unknow 1");
       entity.setCpf("384.777.090-09");
@@ -198,12 +199,16 @@ public class AlunoRepositoryTest {
 
    @Test
    @Transactional
-   public void cancelarMatricula() throws Exception {
+   void tesCancelarMatricula() throws Exception {
       var actual = repositorio.buscarPorId(1);
       actual = repositorio.cancelarMatricula(actual);
 
       assertFalse(actual.isEstado());
       executeAssertions(parameters, actual);
+
+      // Desfaz as alterações
+      actual = repositorio.rematricular(actual);
+      assertTrue(actual.isEstado());
    }
 
    private void executeAssertions(String[] parameters, Aluno aluno) {
@@ -213,12 +218,5 @@ public class AlunoRepositoryTest {
       assertEquals(parameters[3], aluno.getCursoMatriculado().getNomeDoCurso());
 
    }
-
-   // private void saveToRepository(AlunoRepositoryJDBC repositorio, Aluno...
-   // entities) throws Exception {
-   // for (Aluno entity : entities) {
-   // repositorio.matricular(entity);
-   // }
-   // }
 
 }
