@@ -6,7 +6,7 @@ public interface RepositoryProfessor {
 
    public List<Professor> listarTodos() throws Exception;
 
-   public Professor buscarPorMatricula(String matricula) throws Exception;
+   public Professor buscarPorMatricula(String matricula);
 
    public Professor buscarPorId(int id) throws Exception;
 

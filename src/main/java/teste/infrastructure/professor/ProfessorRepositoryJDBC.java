@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
@@ -27,12 +28,16 @@ public class ProfessorRepositoryJDBC implements RepositoryProfessor {
    }
 
    @Override
-   public Professor buscarPorMatricula(String matricula) throws Exception {
-      String nameQuery = "CONSULTAR_PROFESSOR_POR_MATRICULA";
-      TypedQuery<Professor> query = em.createNamedQuery(nameQuery, Professor.class)
-            .setParameter("matricula", matricula);
+   public Professor buscarPorMatricula(String matricula) {
+      try {
+         String nameQuery = "CONSULTAR_PROFESSOR_POR_MATRICULA";
+         TypedQuery<Professor> query = em.createNamedQuery(nameQuery, Professor.class)
+               .setParameter("matricula", matricula);
 
-      return query.getSingleResult();
+         return query.getSingleResult();
+      } catch (NoResultException e) {
+         return null;
+      }
    }
 
    @Override

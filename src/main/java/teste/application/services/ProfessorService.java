@@ -6,13 +6,11 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
 import javax.validation.Validator;
 
+import lombok.RequiredArgsConstructor;
 import teste.application.dto.Mensagem;
 import teste.application.dto.curso.CursoRequestDTO;
 import teste.application.dto.disciplina.DisciplinaRequestDTO;
@@ -23,8 +21,6 @@ import teste.application.exceptions.CustomConstraintException;
 import teste.application.exceptions.ErrorResponse;
 import teste.application.exceptions.NotFoundException;
 import teste.application.interfaces.mapper.ProfessorMapper;
-import teste.application.interfaces.services.ServiceGenerics;
-import teste.application.interfaces.services.ServiceCadastroMatricula;
 import teste.domain.curso.Curso;
 import teste.domain.disciplina.Disciplina;
 import teste.domain.mappeamento.CursoProfessor;
@@ -38,89 +34,72 @@ import teste.infrastructure.mapeamento.ProfessorDisciplinaRepository;
 import teste.infrastructure.professor.ProfessorRepositoryJDBC;
 
 @RequestScoped
-public class ProfessorService implements ServiceGenerics<ProfessorPersonInfosResponseDTO, ProfessorRequestDTO>,
-      ServiceCadastroMatricula<ProfessorMasterInfosResponseDTO, ProfessorRequestDTO> {
+@RequiredArgsConstructor
+public class ProfessorService {
 
    // #region Injetores
-   @Inject
-   ProfessorRepositoryJDBC repositorio;
-
-   @Inject
-   DisciplinaRepositoryJDBC disciplinaRepositorio;
-
-   @Inject
-   CursoRepositoryJDBC cursoRepositorio;
-
-   @Inject
-   CursoProfessorRepository cursoProfessorRepository;
-
-   @Inject
-   ProfessorDisciplinaRepository repositorioPD;
-
-   @Inject
-   ProfessorMapper professorMapper;
-
-   @Inject
-   MatriculaResource mr;
-
-   @Inject
-   Validator validator;
-
+   private final ProfessorRepositoryJDBC repositorio;
+   private final DisciplinaRepositoryJDBC disciplinaRepositorio;
+   private final CursoRepositoryJDBC cursoRepositorio;
+   private final CursoProfessorRepository cursoProfessorRepository;
+   private final ProfessorDisciplinaRepository repositorioPD;
+   private final ProfessorMapper professorMapper;
+   private final MatriculaResource mr;
+   private final Validator validator;
    // #endregion
 
-   @Override
    public ProfessorPersonInfosResponseDTO getById(int id) throws Exception {
       return professorMapper.toResource(repositorio.buscarPorId(id));
    }
 
-   @Override
    public List<ProfessorPersonInfosResponseDTO> getAll() throws Exception {
       return professorMapper.listToResource(repositorio.listarTodos());
    }
 
-   @Override
    public ProfessorMasterInfosResponseDTO getByMatricula(String matricula) throws Exception {
       Professor professor = repositorio.buscarPorMatricula(matricula);
 
       if (Objects.isNull(professor)) {
-         throw new NotFoundException("Professor não encontrado!");
+         throw new NotFoundException("Professor não encontrado! Verifique a matrícula informada.");
       }
 
       return professorMapper.toResourceWithCursos(professor);
    }
 
-   @Override
    @Transactional(rollbackOn = Exception.class)
-   @Valid
-   public Mensagem create(ProfessorRequestDTO professorDTO) throws Exception {
-      try {
-         LocalDateTime datetime = LocalDateTime.now();
+   public ProfessorPersonInfosResponseDTO create(ProfessorRequestDTO professorDTO) throws Exception {
+      Set<ConstraintViolation<ProfessorRequestDTO>> violations = validator.validate(professorDTO);
 
-         Professor novo = new Professor(
-               professorDTO.getNome(),
-               professorDTO.getCpf(),
-               mr.gerarMatricula(),
-               true,
-               datetime,
-               datetime,
-               "Contrato iniciado");
-
-         repositorio.contratar(novo);
-         Mensagem mensagem = new Mensagem("Realizado contrato do professor: "
-               + novo.getNome()
-               + ". Nº de matricula: "
-               + novo.getMatricula().getNumero());
-
-         return mensagem;
-      } catch (ConstraintViolationException e) {
-         throw new CustomConstraintException(new ErrorResponse(e.getConstraintViolations()).getMessage());
+      if (!violations.isEmpty()) {
+         throw new CustomConstraintException(
+               new ErrorResponse(violations).getMessage());
       }
+
+      LocalDateTime datetime = LocalDateTime.now();
+      var novo = professorMapper.toEntity(professorDTO);
+
+      novo.setMatricula(mr.gerarMatricula());
+      novo.setEstado(true);
+      novo.setDataCriacao(datetime);
+      novo.setDataAtualizacao(datetime);
+      novo.setObservacao("Contrato iniciado");
+
+      var professor = repositorio.contratar(novo);
+      var response = professorMapper.toResource(professor);
+
+      return response;
    }
 
-   @Override
    @Transactional(rollbackOn = Exception.class)
-   @Valid
-   public Mensagem updateCadastro(String matricula, ProfessorRequestDTO professorDTO) throws Exception {
+   public ProfessorPersonInfosResponseDTO updateCadastro(String matricula, ProfessorRequestDTO professorDTO)
+         throws Exception {
+      Set<ConstraintViolation<ProfessorRequestDTO>> violations = validator.validate(professorDTO);
+
+      if (!violations.isEmpty()) {
+         throw new CustomConstraintException(
+               new ErrorResponse(violations).getMessage());
+      }
+
       Professor professor = repositorio.buscarPorMatricula(matricula);
       LocalDateTime datetime = LocalDateTime.now();
 
@@ -129,26 +108,22 @@ public class ProfessorService implements ServiceGenerics<ProfessorPersonInfosRes
       professor.setDataAtualizacao(datetime);
       professor.setObservacao("Atualizado informações do cadastro");
 
-      Set<ConstraintViolation<Professor>> violations = validator.validate(professor);
-
-      if (!violations.isEmpty()) {
-         throw new CustomConstraintException(new ErrorResponse(violations).getMessage());
-      }
-
-      repositorio.atualizarProfessor(professor);
-      Mensagem mensagem = new Mensagem("Cadastro atualizado com sucesso.");
-      return mensagem;
+      var update = repositorio.atualizarProfessor(professor);
+      var response = professorMapper.toResource(update);
+      return response;
    }
 
    @Transactional(rollbackOn = Exception.class)
-   public Mensagem teachDiscipline(String matricula, DisciplinaRequestDTO disciplinaDTO) throws Exception {
+   public ProfessorMasterInfosResponseDTO teachDiscipline(String matricula, DisciplinaRequestDTO disciplinaDTO)
+         throws Exception {
       LocalDateTime datetime = LocalDateTime.now();
       Professor professor = repositorio.buscarPorMatricula(matricula);
-      Disciplina disciplina = disciplinaRepositorio.buscarPorDisciplina(disciplinaDTO.getNomeDaDisciplina());
 
       if (Objects.isNull(professor)) {
-         throw new NotFoundException("Professor não encontrado na base de dados!");
+         throw new NotFoundException("Professor não encontrado!");
       }
+
+      Disciplina disciplina = disciplinaRepositorio.buscarPorDisciplina(disciplinaDTO.getNomeDaDisciplina());
 
       if (Objects.isNull(disciplina)) {
          throw new NotFoundException("Disciplina não encontrada!");
@@ -160,36 +135,31 @@ public class ProfessorService implements ServiceGenerics<ProfessorPersonInfosRes
       professor.setObservacao("Disciplina: "
             + disciplina.getNomeDaDisciplina()
             + " adicionada ao quadro de disciplinas do professor");
-      professor.setDataAtualizacao(datetime);
-      repositorio.atualizarProfessor(professor);
+      professor = repositorio.atualizarProfessor(professor);
 
-      Mensagem mensagem = new Mensagem("Disciplina "
-            + disciplina.getNomeDaDisciplina()
-            + " adicionada ao quadro de disciplinas lecionadas do professor: "
-            + professor.getNome()
-            + ". Matrícula: " + professor.getMatricula().getNumero());
-      return mensagem;
+      return professorMapper.toResourceWithCursos(professor);
    }
 
    @Transactional(rollbackOn = Exception.class)
-   public Mensagem stopTeachingDiscipline(String matricula, DisciplinaRequestDTO disciplinaDTO) throws Exception {
+   public ProfessorMasterInfosResponseDTO stopTeachingDiscipline(String matricula, DisciplinaRequestDTO disciplinaDTO)
+         throws Exception {
       LocalDateTime datetime = LocalDateTime.now();
       Professor professor = repositorio.buscarPorMatricula(matricula);
-      Disciplina disciplina = disciplinaRepositorio.buscarPorDisciplina(disciplinaDTO.getNomeDaDisciplina());
 
       if (Objects.isNull(professor)) {
-         throw new NotFoundException("Professor não encontrado na base de dados!");
+         throw new NotFoundException("Professor não encontrado! Verifique a matrícula informada.");
       }
+
+      Disciplina disciplina = disciplinaRepositorio.buscarPorDisciplina(disciplinaDTO.getNomeDaDisciplina());
 
       if (Objects.isNull(disciplina)) {
          throw new NotFoundException("Disciplina não encontrada!");
       }
 
       try {
-         ProfessorDisciplina apagar = repositorioPD.find("professor_id = ?1 and disciplina_id = ?2", professor.getId(),
-               disciplina.getId()).firstResult();
+         var toDelete = repositorioPD.buscarPorProfessorEDisciplina(professor.getId(), disciplina.getId());
 
-         repositorioPD.delete(apagar);
+         repositorioPD.delete(toDelete);
 
          professor.setObservacao("Disciplina: "
                + disciplina.getNomeDaDisciplina()
@@ -197,21 +167,14 @@ public class ProfessorService implements ServiceGenerics<ProfessorPersonInfosRes
          professor.setDataAtualizacao(datetime);
          repositorio.atualizarProfessor(professor);
 
-         Mensagem mensagem = new Mensagem("Disciplina "
-               + disciplina.getNomeDaDisciplina()
-               + " removida do quadro de disciplinas lecionadas do professor: "
-               + professor.getNome()
-               + ". Matrícula: " + professor.getMatricula().getNumero());
-         return mensagem;
+         return professorMapper.toResourceWithCursos(professor);
       } catch (NullPointerException e) {
          throw new NotFoundException("Professor não leciona a disciplina informada!");
-      } catch (Exception e) {
-         throw new Exception(e.getMessage());
       }
    }
 
    @Transactional(rollbackOn = Exception.class)
-   public Mensagem addCurso(String matricula, CursoRequestDTO cursoDTO) throws Exception {
+   public ProfessorMasterInfosResponseDTO addCurso(String matricula, CursoRequestDTO cursoDTO) throws Exception {
       LocalDateTime dateTime = LocalDateTime.now();
       Professor professor = repositorio.buscarPorMatricula(matricula);
 
@@ -227,12 +190,8 @@ public class ProfessorService implements ServiceGenerics<ProfessorPersonInfosRes
 
       CursoProfessor novo = new CursoProfessor(curso, professor, dateTime, dateTime);
       cursoProfessorRepository.create(novo);
-      professor.setDataAtualizacao(dateTime);
 
-      Mensagem mensagem = new Mensagem("Professor: " + professor.getNome()
-            + " Matricula: " + professor.getMatricula().getNumero()
-            + ". Adicionado ao quadro de professores do Curso: " + curso.getNomeDoCurso());
-      return mensagem;
+      return professorMapper.toResourceWithCursos(professor);
    }
 
    @Transactional(rollbackOn = Exception.class)

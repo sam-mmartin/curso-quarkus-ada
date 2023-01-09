@@ -69,57 +69,57 @@ public class ProfessorResource {
 
    @POST
    public Response contratarProfessor(ProfessorRequestDTO professorDTO) throws Exception {
-      Mensagem mensagem = service.create(professorDTO);
+      var response = service.create(professorDTO);
 
-      return Response.status(Response.Status.CREATED).entity(mensagem).build();
+      return Response.status(Response.Status.CREATED).entity(response).build();
    }
 
    @PUT
    @Path("/{matricula}")
    public Response atualizarCadastroProfessor(@PathParam("matricula") String matricula,
          ProfessorRequestDTO professorDTO) throws Exception {
-      Mensagem mensagem = service.updateCadastro(matricula, professorDTO);
+      var professor = service.updateCadastro(matricula, professorDTO);
 
-      return Response.ok(mensagem).build();
+      return Response.ok(professor).build();
    }
 
    @PUT
    @Path("/lecionar-disciplina/{matricula}")
    public Response lecionarDisciplina(@PathParam("matricula") String matricula,
          DisciplinaRequestDTO disciplinaRequestDTO) throws Exception {
-      Mensagem mensagem = service.teachDiscipline(matricula, disciplinaRequestDTO);
+      var professor = service.teachDiscipline(matricula, disciplinaRequestDTO);
 
-      if (Objects.isNull(mensagem)) {
+      if (Objects.isNull(professor)) {
          return Response.status(Response.Status.NOT_FOUND).build();
       }
 
-      return Response.ok(mensagem).build();
+      return Response.ok(professor).build();
    }
 
    @PUT
    @Path("/remover-disciplina/{matricula}")
    public Response pararDeLecionarDisciplina(@PathParam("matricula") String matricula,
          DisciplinaRequestDTO disciplinaRequestDTO) throws Exception {
-      Mensagem mensagem = service.stopTeachingDiscipline(matricula, disciplinaRequestDTO);
+      var professor = service.stopTeachingDiscipline(matricula, disciplinaRequestDTO);
 
-      if (Objects.isNull(mensagem)) {
+      if (Objects.isNull(professor)) {
          return Response.status(Response.Status.NOT_FOUND).build();
       }
 
-      return Response.ok(mensagem).build();
+      return Response.ok(professor).build();
    }
 
    @PUT
    @Path("/adicionar-curso/{matricula}")
    public Response adicionarCurso(@PathParam("matricula") String matricula,
          CursoRequestDTO cursoDTO) throws Exception {
-      Mensagem mensagem = service.addCurso(matricula, cursoDTO);
+      var professor = service.addCurso(matricula, cursoDTO);
 
-      if (Objects.isNull(mensagem)) {
+      if (Objects.isNull(professor)) {
          return Response.status(Response.Status.NOT_FOUND).build();
       }
 
-      return Response.ok(mensagem).build();
+      return Response.ok(professor).build();
    }
 
    @PUT

@@ -9,7 +9,6 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import javax.transaction.RollbackException;
 import javax.validation.ConstraintViolationException;
 
@@ -47,9 +46,9 @@ public class ProfessorRepositoryTest {
    }
 
    @Test
-   void testBuscarPorMatriculaNoResult() {
-      assertThrows(NoResultException.class,
-            () -> repository.buscarPorMatricula("0000"));
+   void testBuscarPorMatriculaNoResult() throws Exception {
+      var res = repository.buscarPorMatricula("0000");
+      assertNull(res);
    }
 
    @Test

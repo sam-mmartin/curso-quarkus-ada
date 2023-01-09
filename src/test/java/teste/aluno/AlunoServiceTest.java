@@ -13,6 +13,8 @@ import static org.mockito.Mockito.verify;
 
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import teste.application.dto.Mensagem;
 import teste.application.dto.aluno.AlunoCursoRequestDTO;
 import teste.application.dto.aluno.AlunoRequestDTO;
@@ -82,6 +84,15 @@ public class AlunoServiceTest {
       var actual = service.getByMatricula("0000");
 
       assertEquals(response1, actual);
+   }
+
+   @Test
+   void testGetByMatriculaNoResult() throws Exception {
+      given(service.getByMatricula("0000")).willThrow(NoResultException.class);
+
+      assertThrows(NoResultException.class,
+            () -> service.getByMatricula("0000"),
+            "Professor não encontrado!");
    }
 
    @Test
